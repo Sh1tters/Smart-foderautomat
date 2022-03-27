@@ -59,21 +59,24 @@ class navigationbar {
   }
 
   void ActionEvent() {
-    if (mousePressed) {
+    if (mousePressed && !preload && !loading) {
       // onClick settings fragment
       if (mouseX > 0 && mouseX < 0 + 137.333*2+50 && mouseY > height-150 && mouseY < height-150+height) {
         //image(settings_s, 137.33-50, height-30);
         nav_active_item = "Settings";
+        loading = true;
       }
       
       // onClick home fragment
       if (mouseX > 137.333*2+50 && mouseX < 137.333*2+50+137.333*3+50 && mouseY > height-150 && mouseY < height-150+height){
         nav_active_item = "Home";
+        loading = true;
       }
       
       // onClick info fragment
       if (mouseX > 137.333*5+100 && mouseX < 137.333*5+100 + width && mouseY > height-150 && mouseY < height-150+height){
         nav_active_item = "Info";
+        loading = true;
       }
     }
   }

@@ -1,3 +1,5 @@
+boolean loading = false;
+
 class fragments {
    
   
@@ -6,6 +8,8 @@ class fragments {
     textSize(50);
     fill(255);
     text("Home Fragment", width/2, height/2);
+    
+    loading = false;
   }
   
   void Fsettings(){
@@ -13,6 +17,8 @@ class fragments {
     textSize(50);
     fill(255);
     text("Settings Fragment", width/2, height/2);
+    
+    loading = false;
   }
   
   void Finfo(){
@@ -20,6 +26,8 @@ class fragments {
     textSize(50);
     fill(255);
     text("Info Fragment", width/2, height/2);
+    
+    loading = false;
   }
   
 }

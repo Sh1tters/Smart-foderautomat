@@ -1,6 +1,5 @@
 boolean preload = true;
-int n, r;
-float t;
+float n, r, t;
 
 navigationbar nav;
 fragments frag;
@@ -24,7 +23,7 @@ void preload() {
   info_s = loadImage("info - Copy.png");
 
 
-  // preload = false;
+  preload = false;
 }
 
 void splashscreen() {
@@ -35,8 +34,8 @@ void setup() {
   // Oneplus 9g phone dms: 412x915
   size(displayWidth, displayHeight, OPENGL);
 
-  n = 20;
-  r = 40;
+  n = 80;
+  r = 200;
 
   // start preload thread
   thread("preload");
@@ -46,21 +45,8 @@ void setup() {
 void draw() {
   background(35);
   if (preload) {
-    // display loading icon
-     smooth();
-    noStroke();
+    loadingAnimation();
 
-    t = -(millis()/500);
-    
-    for (int i = 0; i < n; i++) {
-        fill(255, 255-(i/n)*128, 0);
-        
-        float x = (width/2)+sin((sin(t+((i/n)*PI))/2)+t)*r;
-        float y = (height/2)+cos((sin(t+((i/n)*PI))/2)+t)*r;
-        float d = (sin((i/n)*PI))*4;
-        ellipse(x, y, d, d);
-    }
-    
     println("loading...");
   } else {
     if (nav_active_item == "Home") {
@@ -72,8 +58,37 @@ void draw() {
     }
     nav.setup();
   }
+
+  if (loading) {
+    background(35);
+    loadingAnimation();
+    nav.setup();
+  }
 }
 
 void mousePressed() {
   splashAni.add(new splash());
+}
+
+void loadingAnimation() {
+  smooth();
+  noStroke();
+
+
+  //https://openprocessing.org/sketch/579622
+  /*
+        Loading animation from open processing - changed millis into frameCount since it was too fast, also fixed the negative green color.
+   */
+  t = -radians(frameCount);
+  for (int i = 0; i < n; i++) {
+    float norm = norm(i, 0, n-1);
+    fill(255, norm*128, 0);
+    float x = (width/2)+sin((sin(t+(norm*PI))/1)+t)*r;
+    float y = (height/2)+cos((sin(t+(norm*PI))/1)+t)*r;
+    float d = (sin((i/n)*PI))*16;
+    ellipse(x, y, d, d);
+  }
+  textSize(60);
+  textAlign(CENTER);
+  text("Loading...", width/2, height/2);
 }
