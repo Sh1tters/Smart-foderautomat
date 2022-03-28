@@ -3,6 +3,7 @@ float n, r, t;
 
 navigationbar nav;
 fragments frag;
+database db;
 splash[] splash;
 int unit = 3;
 ArrayList<splash> splashAni = new ArrayList<splash>();
@@ -10,11 +11,13 @@ ArrayList<splash> splashAni = new ArrayList<splash>();
 PImage home, settings, info, home_s, settings_s, info_s;
 String nav_active_item = "Home";
 
+boolean firstrun;
+
+void firstrunpreload() {
+}
+
 void preload() {
   // runs on a different thread
-  nav = new navigationbar();
-  frag = new fragments();
-  splash = new splash[unit];
   home = loadImage("home.png");
   settings = loadImage("settings.png");
   info = loadImage("info.png");
@@ -34,8 +37,17 @@ void setup() {
   // Oneplus 9g phone dms: 412x915
   size(displayWidth, displayHeight, OPENGL);
 
+  nav = new navigationbar();
+  frag = new fragments();
+  db = new database();
+  splash = new splash[unit];
+
   n = 80;
   r = 200;
+
+  if (!db.isFileCreated()) {
+    db.createFile();
+  }
 
   // start preload thread
   thread("preload");
@@ -44,25 +56,41 @@ void setup() {
 
 void draw() {
   background(35);
-  if (preload) {
-    loadingAnimation();
-
-    println("loading...");
+  if (db.firstrun()) {
+    println("first run!!");
+    
+    
+    // when done with cali
+    ////  db.findandchangevalue("FirstRun", "false");
   } else {
-    if (nav_active_item == "Home") {
-      frag.Fhome();
-    } else if (nav_active_item == "Settings") {
-      frag.Fsettings();
-    } else {
-      frag.Finfo();
-    }
-    nav.setup();
-  }
+    if (preload) {
+      loadingAnimation();
 
-  if (loading) {
-    background(35);
-    loadingAnimation();
-    nav.setup();
+      println("loading...");
+    } else {
+      if (!db.isFileCreated()) {
+        db.createFile();
+      }
+
+
+      if (nav_active_item == "Home") {
+        frag.Fhome();
+      } else if (nav_active_item == "Settings") {
+        frag.Fsettings();
+      } else {
+        frag.Finfo();
+      }
+      nav.setup();
+    }
+
+    if (loading) {
+      background(35);
+      loadingAnimation();
+
+      //show something
+
+      nav.setup();
+    }
   }
 }
 
