@@ -4,7 +4,7 @@ PrintWriter output;
 class database {
   
   boolean firstrun(){
-    String[] rawdata = loadStrings("data/database.txt");
+    String[] rawdata = loadStrings(dataPath("")+"\\database.txt");
     String[] raw;
     for(int i = 0; i < rawdata.length; i++){
       raw = split(rawdata[i], ":");
@@ -22,14 +22,14 @@ class database {
   }
 
   void requestData() {
-    String[] rawdata = loadStrings("data/database.txt");
+    String[] rawdata = loadStrings(dataPath("")+"\\database.txt");
     for (int i = 0; i < rawdata.length; i++) {
       println(rawdata[i]);
     }
   }
 
   void findandchangevalue(String keyword, String newValue) {
-    String[] rawdata = loadStrings("data/database.txt");
+    String[] rawdata = loadStrings(dataPath("")+"\\database.txt");
     String[] raw;
     for (int i = 0; i < rawdata.length; i++) {
       raw = split(rawdata[i], ":");
@@ -45,11 +45,11 @@ class database {
     }
 
     // save the file
-    saveStrings("data/database.txt", rawdata);
+    saveStrings(dataPath("")+"\\database.txt", rawdata);
   }
 
   boolean isFileCreated() {
-    File f = dataFile("database.txt");
+    File f = dataFile(dataPath("")+"\\database.txt");
     boolean exist = f.isFile();
 
     if (exist) {
@@ -59,6 +59,6 @@ class database {
   }
 
   void createFile() {
-    output = createWriter("data/database.txt");
+    output = createWriter(dataPath("")+"\\database.txt");
   }
 }
