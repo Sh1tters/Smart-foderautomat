@@ -4,11 +4,13 @@ float n, r, t;
 navigationbar nav;
 fragments frag;
 database db;
+dashboarditems dbi;
 splash[] splash;
 int unit = 3;
 ArrayList<splash> splashAni = new ArrayList<splash>();
 PFont Segoe, SegoeBold;
-PImage home, settings, info, home_s, settings_s, info_s, datoColWhite, datoColBlue, Oversigt, background;
+PImage home, settings, info, home_s, settings_s, info_s, datoColWhite, datoColBlue, Oversigt, background,
+kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug;
 PImage[] datesWhite = new PImage[4];
 String nav_active_item = "Home";
 boolean firstrun;
@@ -41,8 +43,20 @@ void preload() {
   Oversigt = loadImage("Oversigt.png");
   Oversigt.resize(285, 80);
   
+  //kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug;
+  kitty_forbrug = loadImage("kitty (1).png");
+  kitty_forbrug.resize(100, 100);
+  kitty_spist = loadImage("kitty.png");
+  kitty_spist.resize(100, 100);
+  kitty_vaegt = loadImage("selfie.png");
+  kitty_vaegt.resize(100, 100);
+  kitty_time = loadImage("hourglass.png");
+  kitty_time.resize(100, 100);
+  dashboarditem = loadImage("Rectangle 25.png");
+  dashboarditem.resize(179*3, 215*3);
+  
   Segoe = createFont("Segoe UI", 32);
-  SegoeBold = createFont("Segoe UI Black", 50);
+  SegoeBold = createFont("Segoe UI Bold", 70);
 
   preload = false;
 }
@@ -57,10 +71,14 @@ void setup() {
   background.resize(displayWidth, displayHeight);
 
   size(displayWidth, displayHeight, OPENGL);
+  
+  // fix orientation of the phone to portrait and avoid auto-rotate(which restarts the app):
+  orientation(PORTRAIT);
 
   nav = new navigationbar();
   frag = new fragments();
   db = new database();
+  dbi = new dashboarditems();
   splash = new splash[unit];
 
   n = 80;

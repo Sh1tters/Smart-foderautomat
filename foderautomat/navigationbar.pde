@@ -26,7 +26,7 @@ class navigationbar {
   }
 
   void bar_background() {
-    fill(65);
+    fill(125);
     noStroke();
     rect(0, height-150, width, 200);
   }

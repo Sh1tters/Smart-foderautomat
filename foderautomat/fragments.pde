@@ -23,7 +23,7 @@ class fragments {
   void home_layout() {
     // title
     image(Oversigt, width/2, 200);
-    
+
     // date slide
     for (int i = datesWhite.length - 1, x = 133; i >= 0; i--) {
       String date = findPrevDay(today, i).toString();
@@ -39,6 +39,9 @@ class fragments {
       text(dateParts[0], x, 550);
       x+=270;
     }
+    
+    // show dashboard items
+    dbi.setup();
   }
 
 
@@ -74,50 +77,16 @@ class fragments {
   void home_handler() {
     if (selected.equals("one")) {
       image(datoColBlue, 133, 500);
-      String date = findPrevDay(today, 3).toString();
-      String[] dateParts = date.split(" ");
-
-      textAlign(CENTER);
-      fill(#ffffff);
-      textFont(Segoe, 65);
-      text(dateParts[2], 133, 500);
-      textFont(Segoe, 40);
-      text(dateParts[0], 133, 550);
-      
-      
+      setText(3, 133, 500, 550);
     } else if (selected.equals("two")) {
       image(datoColBlue, 133 + addon, 500);
-      String date = findPrevDay(today, 2).toString();
-      String[] dateParts = date.split(" ");
-
-      textAlign(CENTER);
-      fill(#ffffff);
-      textFont(Segoe, 65);
-      text(dateParts[2], 133 + addon, 500);
-      textFont(Segoe, 40);
-      text(dateParts[0], 133 + addon, 550);
+      setText(2, 133 + addon, 500, 550);
     } else if (selected.equals("three")) {
       image(datoColBlue, 133 + (addon * 2), 500);
-      String date = findPrevDay(today, 1).toString();
-      String[] dateParts = date.split(" ");
-
-      textAlign(CENTER);
-      fill(#ffffff);
-      textFont(Segoe, 65);
-      text(dateParts[2], 133 + (addon * 2), 500);
-      textFont(Segoe, 40);
-      text(dateParts[0], 133 + (addon * 2), 550);
+      setText(1, 133 + (addon * 2), 500, 550);
     } else if (selected.equals("four")) {
       image(datoColBlue, 133 + (addon * 3), 500);
-      String date = findPrevDay(today, 0).toString();
-      String[] dateParts = date.split(" ");
-
-      textAlign(CENTER);
-      fill(#ffffff);
-      textFont(Segoe, 65);
-      text(dateParts[2], 133 + (addon * 3), 500);
-      textFont(Segoe, 40);
-      text(dateParts[0], 133 + (addon * 3), 550);
+      setText(0, 133 + (addon * 3), 500, 550);
     }
   }
 
@@ -129,6 +98,18 @@ class fragments {
   void Finfo() {
 
     loading = false;
+  }
+
+  void setText(int numdate, int x, int y, int y2) {
+    String date = findPrevDay(today, numdate).toString();
+    String[] dateParts = date.split(" ");
+
+    textAlign(CENTER);
+    fill(#ffffff);
+    textFont(Segoe, 65);
+    text(dateParts[2], x, y);
+    textFont(Segoe, 40);
+    text(dateParts[0], x, y2);
   }
 
 
