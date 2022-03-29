@@ -7,8 +7,9 @@ database db;
 splash[] splash;
 int unit = 3;
 ArrayList<splash> splashAni = new ArrayList<splash>();
-
+PFont Segoe;
 PImage home, settings, info, home_s, settings_s, info_s, datoColWhite, datoColBlue, Oversigt, background;
+PImage[] datesWhite = new PImage[4];
 String nav_active_item = "Home";
 boolean firstrun;
 color c1, c2;
@@ -25,10 +26,21 @@ void preload() {
   home_s = loadImage("home - Copy.png");
   settings_s = loadImage("settings - Copy.png");
   info_s = loadImage("info - Copy.png");
-  datoColWhite = loadImage("Rectangle 7.png");
-  datoColWhite.resize(244, 270);
+
+  datesWhite[0] = loadImage("Rectangle 7.png");
+  datesWhite[0].resize(244, 270);
+  datesWhite[1] = loadImage("Rectangle 7.png");
+  datesWhite[1].resize(244, 270);
+  datesWhite[2] = loadImage("Rectangle 7.png");
+  datesWhite[2].resize(244, 270);
+  datesWhite[3] = loadImage("Rectangle 7.png");
+  datesWhite[3].resize(244, 270);
+
   datoColBlue = loadImage("Rectangle 8.png");
+  datoColBlue.resize(244, 270);
   Oversigt = loadImage("Oversigt.png");
+  
+  Segoe = createFont("Segoe UI", 32);
 
   preload = false;
 }
@@ -41,7 +53,7 @@ void setup() {
   // Oneplus 9g phone dms: 412x915
   background = loadImage("Rectangle 14.png");
   background.resize(displayWidth, displayHeight);
-  
+
   size(displayWidth, displayHeight, OPENGL);
 
   nav = new navigationbar();
@@ -96,7 +108,7 @@ void draw() {
     }
 
     if (loading) {
-      image(background, width/2, height/2);
+      image(background, 0, 0);
       loadingAnimation();
 
 
