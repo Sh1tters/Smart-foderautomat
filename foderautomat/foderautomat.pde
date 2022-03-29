@@ -7,7 +7,7 @@ database db;
 splash[] splash;
 int unit = 3;
 ArrayList<splash> splashAni = new ArrayList<splash>();
-PFont Segoe;
+PFont Segoe, SegoeBold;
 PImage home, settings, info, home_s, settings_s, info_s, datoColWhite, datoColBlue, Oversigt, background;
 PImage[] datesWhite = new PImage[4];
 String nav_active_item = "Home";
@@ -39,8 +39,10 @@ void preload() {
   datoColBlue = loadImage("Rectangle 8.png");
   datoColBlue.resize(244, 270);
   Oversigt = loadImage("Oversigt.png");
+  Oversigt.resize(285, 80);
   
   Segoe = createFont("Segoe UI", 32);
+  SegoeBold = createFont("Segoe UI Black", 50);
 
   preload = false;
 }
@@ -108,7 +110,7 @@ void draw() {
     }
 
     if (loading) {
-      image(background, 0, 0);
+      image(background, width/2, height/2);
       loadingAnimation();
 
 
