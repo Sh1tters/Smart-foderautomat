@@ -44,11 +44,11 @@ void preload() {
   Oversigt.resize(285, 80);
   
   //kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug;
-  kitty_forbrug = loadImage("kitty (1).png");
+  kitty_forbrug = loadImage("forbrug.png");
   kitty_forbrug.resize(100, 100);
   kitty_spist = loadImage("kitty.png");
   kitty_spist.resize(100, 100);
-  kitty_vaegt = loadImage("selfie.png");
+  kitty_vaegt = loadImage("v.png");
   kitty_vaegt.resize(100, 100);
   kitty_time = loadImage("hourglass.png");
   kitty_time.resize(100, 100);
