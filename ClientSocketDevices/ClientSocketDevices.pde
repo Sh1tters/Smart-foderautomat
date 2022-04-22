@@ -32,12 +32,12 @@ void requestData() {
       if (socket.isConnected()) {
         // Send a message to the client application
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-        oos.writeObject("Hello There...");
+        oos.writeObject("requesting information to dc motor module");
 
         // Read and display the response message sent by server application
         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
         String message = (String) ois.readObject();
-        System.out.println("Message: " + message);
+        System.out.println(message);
 
         ois.close();
         oos.close();

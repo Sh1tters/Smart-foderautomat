@@ -1,3 +1,20 @@
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.ClassNotFoundException;
+import java.lang.Runnable;
+import java.lang.Thread;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.SocketAddress;
+
+private static final int PORT = 7777;
+private ServerSocket server;
+
 boolean preload = true;
 float n, r, t;
 
@@ -10,7 +27,7 @@ int unit = 3;
 ArrayList<splash> splashAni = new ArrayList<splash>();
 PFont Segoe, SegoeBold;
 PImage home, settings, info, home_s, settings_s, info_s, datoColWhite, datoColBlue, Oversigt, background,
-kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug;
+  kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug;
 PImage[] datesWhite = new PImage[4];
 String nav_active_item = "Home";
 boolean firstrun;
@@ -42,7 +59,7 @@ void preload() {
   datoColBlue.resize(244, 270);
   Oversigt = loadImage("Oversigt.png");
   Oversigt.resize(285, 80);
-  
+
   //kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug;
   kitty_forbrug = loadImage("forbrug.png");
   kitty_forbrug.resize(100, 100);
@@ -54,7 +71,7 @@ void preload() {
   kitty_time.resize(100, 100);
   dashboarditem = loadImage("Rectangle 25.png");
   dashboarditem.resize(179*3, 215*3);
-  
+
   Segoe = createFont("Segoe UI", 32);
   SegoeBold = createFont("Segoe UI Bold", 70);
 
@@ -71,7 +88,7 @@ void setup() {
   background.resize(displayWidth, displayHeight);
 
   size(displayWidth, displayHeight, OPENGL);
-  
+
   // fix orientation of the phone to portrait and avoid auto-rotate(which restarts the app):
   orientation(PORTRAIT);
 
@@ -91,6 +108,9 @@ void setup() {
 
   // start preload thread
   thread("preload");
+
+  // start coms
+  thread("handleConnection");
 }
 
 
@@ -100,7 +120,7 @@ void draw() {
   //makeGradientBackground();
 
   if (db.firstrun()) {
-    // First ever run 
+    // First ever run
     println("first run!!");
 
 
@@ -166,9 +186,9 @@ void loadingAnimation() {
 }
 
 void makeGradientBackground() {
-  y = 0; 
-  x = 0; 
-  w = width; 
+  y = 0;
+  x = 0;
+  w = width;
   h = height;
   c2 = color(#D9F6FA);
   c1 = color(#F8FEFF);
@@ -179,5 +199,97 @@ void makeGradientBackground() {
     color c = lerpColor(c1, c2, inter);
     stroke(c);
     line(x, i, x+w, i);
+  }
+}
+
+
+
+
+// SOCKET COMMUNICATIONS DOWN BELOW
+void handleConnection() {
+  InetAddress inetAddress;
+  try {
+    inetAddress = InetAddress.getLocalHost();
+
+    // call constructor
+    server = new ServerSocket(PORT);
+  }
+  catch (IOException e) {
+    e.printStackTrace();
+  }
+  println("(!) Server socket is bounded: " + server.isBound() + " (!)");
+  println("(!) Local Socket Address: "+ server.getLocalSocketAddress() +"(!)");
+  System.out.println("Waiting for client message...");
+
+  // The server do a loop here to accept all connection initiated by the
+  // client application.
+  while (true) {
+    try {
+      Socket socket = server.accept();
+      println("(!) New connection established... (!)");
+      new ConnectionHandler(socket);
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
+
+
+class ConnectionHandler implements Runnable {
+  private final Socket socket;
+
+  ConnectionHandler(Socket socket) {
+    this.socket = socket;
+
+    Thread t = new Thread(this);
+    t.start();
+  }
+
+  public void run() {
+    try {
+      try {
+        // Read a message sent by client application
+        ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+        String message = (String) ois.readObject();
+
+        //DC MOTOR
+        if (message.equals("requesting information to dc motor module")) {
+          println("(!) Received a request from DC Motor! Sending back information.. (!)");
+
+          // retrieve information from dc motor txt document
+
+          // Send a response information to the client application
+          ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+          oos.writeObject("14:56");
+          oos.close();
+
+          println("(!) Sent back to client: \"14:56\" (!)");
+        }
+
+        //WEIGHT SENSOR
+        if (message.equals("received information from weight sensor")) {
+          // append information to weight document
+        }
+
+        // DISTANCE SENSOR
+        if (message.equals("received information from distance sensor")) {
+          
+        }
+
+        ois.close();
+        socket.close();
+
+        println();
+        println("(!)=================LOG================(!)");
+        System.out.println("Waiting for client message...");
+      }
+      catch (ClassNotFoundException ce) {
+        ce.printStackTrace();
+      }
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }
