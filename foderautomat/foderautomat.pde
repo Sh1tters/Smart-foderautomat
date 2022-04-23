@@ -22,6 +22,7 @@ navigationbar nav;
 fragments frag;
 database db;
 dashboarditems dbi;
+communicationDatabase cdb;
 splash[] splash;
 int unit = 3;
 ArrayList<splash> splashAni = new ArrayList<splash>();
@@ -95,6 +96,7 @@ void setup() {
   nav = new navigationbar();
   frag = new fragments();
   db = new database();
+  cdb = new communicationDatabase();
   dbi = new dashboarditems();
   splash = new splash[unit];
 
@@ -258,13 +260,12 @@ class ConnectionHandler implements Runnable {
           println("(!) Received a request from DC Motor! Sending back information.. (!)");
 
           // retrieve information from dc motor txt document
-
           // Send a response information to the client application
           ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-          oos.writeObject("14:56");
+          oos.writeObject(cdb.requestDcMotorInformation());
           oos.close();
 
-          println("(!) Sent back to client: \"14:56\" (!)");
+          println("(!) Sent back to client: " + cdb.requestDcMotorInformation() + " (!)");
         }
 
         //WEIGHT SENSOR

@@ -2,23 +2,23 @@ PrintWriter output;
 
 
 class database {
-  
-  boolean firstrun(){
+
+  boolean firstrun() {
     String[] rawdata = loadStrings(dataPath("")+"\\database.txt");
     String[] raw;
-    for(int i = 0; i < rawdata.length; i++){
+    for (int i = 0; i < rawdata.length; i++) {
       raw = split(rawdata[i], ":");
-      
+
       // find keyword
-      if(raw[0].equals("FirstRun")){
-        
+      if (raw[0].equals("FirstRun")) {
+
         // find value
-        if(raw[1].equals("true")){
+        if (raw[1].equals("true")) {
           return true;
         }
       }
     }
-     return false;
+    return false;
   }
 
   void requestData() {
@@ -60,5 +60,48 @@ class database {
 
   void createFile() {
     output = createWriter(dataPath("")+"\\database.txt");
+  }
+}
+
+class communicationDatabase {
+
+  String requestDcMotorInformation() {
+    int sum1 = 0;
+    int sum2 = 0;
+    datafileExist();
+
+    String[] rawdata = loadStrings(dataPath("")+"\\data.txt");
+    String[] filtered;
+    ArrayList<String> hits = new ArrayList<String>();
+    for (int i = 0; i < rawdata.length; i++) {
+      filtered = split(rawdata[i], "/");
+
+      // check if data is time measured
+      if (filtered[2].equals("time")) {
+        hits.add(filtered[1]);
+      }
+    }
+    
+    for(int i = 0; i < hits.size(); i++){
+      String[] bug = split(hits.get(i), ".");
+      int num = Integer.parseInt(bug[0]);
+      int num1 = Integer.parseInt(bug[1]);
+      sum1 += num;
+      sum2 += num1;
+    }
+    sum1 = sum1 / hits.size();
+    sum2 = sum2 / hits.size();
+    
+    return sum1 + ":" + sum2;
+  }
+
+  void datafileExist() {
+    File f = dataFile(dataPath("")+"\\data.txt");
+    boolean exist = f.isFile();
+
+    if (exist) {
+    } else {
+      output = createWriter(dataPath("")+"\\data.txt");
+    }
   }
 }
