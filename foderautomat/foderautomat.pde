@@ -99,7 +99,6 @@ void setup() {
   cdb = new communicationDatabase();
   dbi = new dashboarditems();
   splash = new splash[unit];
-
   n = 80;
   r = 200;
 
@@ -209,10 +208,7 @@ void makeGradientBackground() {
 
 // SOCKET COMMUNICATIONS DOWN BELOW
 void handleConnection() {
-  InetAddress inetAddress;
   try {
-    inetAddress = InetAddress.getLocalHost();
-
     // call constructor
     server = new ServerSocket(PORT);
   }
@@ -262,20 +258,19 @@ class ConnectionHandler implements Runnable {
           // retrieve information from dc motor txt document
           // Send a response information to the client application
           ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-          oos.writeObject(cdb.requestDcMotorInformation());
+          oos.writeObject(cdb.requestDcMotorSumOfAllTime());
           oos.close();
 
-          println("(!) Sent back to client: " + cdb.requestDcMotorInformation() + " (!)");
+          println("(!) Sent back to client: " + cdb.requestDcMotorSumOfAllTime() + " (!)");
         }
 
         //WEIGHT SENSOR
-        if (message.equals("received information from weight sensor")) {
+        if (message.startsWith("InfoFromWeightSensor:")) {
           // append information to weight document
         }
 
         // DISTANCE SENSOR
-        if (message.equals("received information from distance sensor")) {
-          
+        if (message.startsWith("InfoFromDistanceSensor:")) {
         }
 
         ois.close();

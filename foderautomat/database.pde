@@ -1,4 +1,12 @@
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Calendar;
+
 PrintWriter output;
+
 
 
 class database {
@@ -64,8 +72,36 @@ class database {
 }
 
 class communicationDatabase {
+  /**
+   
+   println(cdb.requestDcMotorSumOfTimeFromToday(LocalDateTime.now()));
+   today = new Date();
+   println(LocalDateTime.now());
+   println(frag.findPrevDay(today, 0).toString());
+   println(frag.findPrevDay(today, 1).toString());
+   println(frag.findPrevDay(today, 2).toString());
+   println(frag.findPrevDay(today, 3).toString());*/
 
-  String requestDcMotorInformation() {
+  void requestDcMotorSumOfADayAndSetTextOnApp() {
+    int sum1 = 0;
+    int sum2 = 0;
+    datafileExist();
+
+
+    String[]rawdata = loadStrings(dataPath("")+"\\data.txt");
+    String[] filtered;
+    String dateFiltered;
+    ArrayList<String> hits = new ArrayList<String>();
+    for (int i = 0; i < rawdata.length; i++) {
+      filtered = split(rawdata[i], "/");
+
+      if (filtered[2].equals("time")) {
+        hits.add(filtered[1]);
+      }
+    }
+  }
+
+  String requestDcMotorSumOfAllTime() {
     int sum1 = 0;
     int sum2 = 0;
     datafileExist();
@@ -81,8 +117,8 @@ class communicationDatabase {
         hits.add(filtered[1]);
       }
     }
-    
-    for(int i = 0; i < hits.size(); i++){
+
+    for (int i = 0; i < hits.size(); i++) {
       String[] bug = split(hits.get(i), ".");
       int num = Integer.parseInt(bug[0]);
       int num1 = Integer.parseInt(bug[1]);
@@ -91,7 +127,7 @@ class communicationDatabase {
     }
     sum1 = sum1 / hits.size();
     sum2 = sum2 / hits.size();
-    
+
     return sum1 + ":" + sum2;
   }
 

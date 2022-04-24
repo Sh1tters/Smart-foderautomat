@@ -1,13 +1,13 @@
 boolean loading = false;
 import java.time.LocalDate;
 import java.util.Date;
+Date today;
 
 String selected = "four";
 
 class fragments {
   final long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;
   int addon = 270;
-  Date today;
 
 
   void Fhome() {
@@ -39,7 +39,7 @@ class fragments {
       text(dateParts[0], x, 550);
       x+=270;
     }
-    
+
     // show dashboard items
     dbi.setup();
   }
@@ -48,7 +48,7 @@ class fragments {
   void home_actions() {
     int x = 133 / 4, y = 380, w = 200, h = 220;
     //244,270
-    // date action event listener 
+    // date action event listener
     // first image
     if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
       //image(datoColBlue, 133, 500);
@@ -111,8 +111,6 @@ class fragments {
     textFont(Segoe, 40);
     text(dateParts[0], x, y2);
   }
-
-
 
   private Date findPrevDay(Date date, int amount)
   {
