@@ -27,8 +27,8 @@ splash[] splash;
 int unit = 3;
 ArrayList<splash> splashAni = new ArrayList<splash>();
 PFont Segoe, SegoeBold;
-PImage home, settings, info, home_s, settings_s, info_s, datoColWhite, datoColBlue, Oversigt, background,
-  kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug;
+PImage home, settings, info, home_s, settings_s, info_s, datoColWhite, datoColBlue, Oversigt, background, 
+  kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug, clock, line;
 PImage[] datesWhite = new PImage[4];
 String nav_active_item = "Home";
 boolean firstrun;
@@ -72,6 +72,11 @@ void preload() {
   kitty_time.resize(100, 100);
   dashboarditem = loadImage("Rectangle 25.png");
   dashboarditem.resize(179*3, 215*3);
+
+  clock = loadImage("clock.png");
+  clock.resize(75, 75);
+  line = loadImage("Line 2.png");
+  line.resize(350, 5);
 
   Segoe = createFont("Segoe UI", 32);
   SegoeBold = createFont("Segoe UI Bold", 70);
@@ -133,7 +138,6 @@ void draw() {
 
       println("loading...");
     } else {
-
       // file created? (may have been deleted)
       if (!db.isFileCreated()) {
         db.createFile();
@@ -260,11 +264,11 @@ class ConnectionHandler implements Runnable {
           // append information to weight document
           println("(!) information from weight sensor received. Appending to data sheet now (!)");
           String[] data = message.split(":");
-          
+
           cdb.WeightSensorAppendData(data[1]);
         }
 
- 
+
 
         ois.close();
         socket.close();

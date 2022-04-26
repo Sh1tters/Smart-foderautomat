@@ -22,7 +22,7 @@ class fragments {
   //font Segoe UI
   void home_layout() {
     // title
-    image(Oversigt, width/2, 200);
+    //image(Oversigt, width/2, 200);
 
     // date slide
     for (int i = datesWhite.length - 1, x = 133; i >= 0; i--) {
@@ -30,13 +30,13 @@ class fragments {
       String[] dateParts = date.split(" ");
 
 
-      image(datesWhite[i], x, 500);
+      image(datesWhite[i], x, 300);
       textAlign(CENTER);
       fill(#613CC6);
       textFont(Segoe, 65);
-      text(dateParts[2], x, 500);
+      text(dateParts[2], x, 300);
       textFont(Segoe, 40);
-      text(dateParts[0], x, 550);
+      text(dateParts[0], x, 350);
       x+=270;
     }
 
@@ -46,7 +46,9 @@ class fragments {
 
 
   void home_actions() {
-    int x = 133 / 4, y = 380, w = 200, h = 220;
+    // four = current date
+    
+    int x = 133 / 4, y = 180, w = 200, h = 220;
     //244,270
     // date action event listener
     // first image
@@ -76,17 +78,17 @@ class fragments {
 
   void home_handler() {
     if (selected.equals("one")) {
-      image(datoColBlue, 133, 500);
-      setText(3, 133, 500, 550);
+      image(datoColBlue, 133, 300);
+      setText(3, 133, 300, 350);
     } else if (selected.equals("two")) {
-      image(datoColBlue, 133 + addon, 500);
-      setText(2, 133 + addon, 500, 550);
+      image(datoColBlue, 133 + addon, 300);
+      setText(2, 133 + addon, 300, 350);
     } else if (selected.equals("three")) {
-      image(datoColBlue, 133 + (addon * 2), 500);
-      setText(1, 133 + (addon * 2), 500, 550);
+      image(datoColBlue, 133 + (addon * 2), 300);
+      setText(1, 133 + (addon * 2), 300, 350);
     } else if (selected.equals("four")) {
-      image(datoColBlue, 133 + (addon * 3), 500);
-      setText(0, 133 + (addon * 3), 500, 550);
+      image(datoColBlue, 133 + (addon * 3), 300);
+      setText(0, 133 + (addon * 3), 300, 350);
     }
   }
 

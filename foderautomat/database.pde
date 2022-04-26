@@ -76,15 +76,40 @@ class database {
 }
 
 class communicationDatabase {
-  /**
-   
-   println(cdb.requestDcMotorSumOfTimeFromToday(LocalDateTime.now()));
-   today = new Date();
-   println(LocalDateTime.now());
-   println(frag.findPrevDay(today, 0).toString());
-   println(frag.findPrevDay(today, 1).toString());
-   println(frag.findPrevDay(today, 2).toString());
-   println(frag.findPrevDay(today, 3).toString());*/
+
+  String SumOfTime(int day, long DAY_IN_MS, SimpleDateFormat simpleDateFormat) {
+    int sum1 = 0;
+    int sum2 = 0;
+    String[] rawdata = loadStrings("data.txt");
+    String[] raw;
+    ArrayList<String> hits = new ArrayList<String>();
+    for (int i = 0; i < rawdata.length; i++) {
+      raw = split(rawdata[i], "/");
+
+      Date d = new Date(System.currentTimeMillis() - (day * DAY_IN_MS));
+      String stringDate= simpleDateFormat.format(d);
+
+      // find keyword
+      if (raw[0].equals(stringDate)) {
+        if (raw[2].equals("time")) {
+          hits.add(raw[1]);
+        }
+      }
+    }
+
+    for (int i = 0; i < hits.size(); i++) {
+      String[] bug = split(hits.get(i), ".");
+      int num = Integer.parseInt(bug[0]);
+      int num1 = Integer.parseInt(bug[1]);
+      sum1 += num;
+      sum2 += num1;
+    }
+    sum1 = sum1 / hits.size();
+    sum2 = sum2 / hits.size();
+
+    return sum1 + ":" + sum2;
+  }
+
 
   void requestDcMotorSumOfADayAndSetTextOnApp() {
     int sum1 = 0;
@@ -92,7 +117,7 @@ class communicationDatabase {
     datafileExist();
 
 
-    String[]rawdata = loadStrings(dataPath("")+"\\data.txt");
+    String[] rawdata = loadStrings(dataPath("")+"\\data.txt");
     String[] filtered;
     String dateFiltered;
     ArrayList<String> hits = new ArrayList<String>();
@@ -171,7 +196,7 @@ class communicationDatabase {
       Date date = new Date();
       SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd");
 
-      pw.write(format.format(date)+"/"+data+"/last_fed_time");
+      pw.write(format.format(date)+"/"+data+"/vaegt");
 
       pw.close();
     }
