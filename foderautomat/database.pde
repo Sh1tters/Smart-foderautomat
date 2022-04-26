@@ -158,6 +158,29 @@ class communicationDatabase {
     }
   }
 
+  void WeightSensorAppendData(String data) {
+    datafileExist();
+
+    try {
+      File file = new File(dataPath("")+"\\data.txt");
+
+      FileWriter fw = new FileWriter(file, true);///true = append
+      BufferedWriter bw = new BufferedWriter(fw);
+      PrintWriter pw = new PrintWriter(bw);
+
+      Date date = new Date();
+      SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd");
+
+      pw.write(format.format(date)+"/"+data+"/last_fed_time");
+
+      pw.close();
+    }
+    catch(IOException ioe) {
+      System.out.println("Exception ");
+      ioe.printStackTrace();
+    }
+  }
+
   void datafileExist() {
     File f = dataFile(dataPath("")+"\\data.txt");
     boolean exist = f.isFile();

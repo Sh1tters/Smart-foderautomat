@@ -186,23 +186,6 @@ void loadingAnimation() {
   text("Loading...", width/2, height/2);
 }
 
-void makeGradientBackground() {
-  y = 0;
-  x = 0;
-  w = width;
-  h = height;
-  c2 = color(#D9F6FA);
-  c1 = color(#F8FEFF);
-
-  // left
-  for (int i = y; i <= y+h; i++) {
-    float inter = map(i, y, y+h, 0, 1);
-    color c = lerpColor(c1, c2, inter);
-    stroke(c);
-    line(x, i, x+w, i);
-  }
-}
-
 
 
 
@@ -263,23 +246,25 @@ class ConnectionHandler implements Runnable {
 
           println("(!) Sent back to client: " + cdb.requestDcMotorSumOfAllTime() + " (!)");
         }
-        
+
         //DC MOTOR
-        if(message.startsWith("last_time_fed:")){
+        if (message.startsWith("last_time_fed:")) {
           println("(!) last time fed information received. Appending to data sheet now (!)");
           String[] data = message.split(":");
-          
-          cdb.LastTimeFedAppendData(data[1]);       
+
+          cdb.LastTimeFedAppendData(data[1]);
         }
 
         //WEIGHT SENSOR
         if (message.startsWith("InfoFromWeightSensor:")) {
           // append information to weight document
+          println("(!) information from weight sensor received. Appending to data sheet now (!)");
+          String[] data = message.split(":");
+          
+          cdb.WeightSensorAppendData(data[1]);
         }
 
-        // DISTANCE SENSOR
-        if (message.startsWith("InfoFromDistanceSensor:")) {
-        }
+ 
 
         ois.close();
         socket.close();
