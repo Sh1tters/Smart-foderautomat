@@ -1,3 +1,5 @@
+import processing.serial.*;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,7 +19,12 @@ String scheduledTimeToEat = "";
 // string variable for quantity of food
 String quantityOfFood = "";
 
+Serial myPort;
+String val;
+
 void setup() {
+  String portName = "COM8";
+  myPort = new Serial(this, portName, 115200);
 }
 
 void draw() {
@@ -27,7 +34,11 @@ void draw() {
 
     requestSocketRespondAndMessage(InetAddress.getLocalHost(), 7777, "time");
     if (dtf.format(now).equals(scheduledTimeToEat)) {
-      // let arduino know, it should fill up now
+      // request how long it should spin
+      requestSocketRespondAndMessage(InetAddress.getLocalHost(), 7777, "quantity");
+        myPort.write("1");
+        // fill up now
+        myPort.write("quan:"+quantityOfFood);
     }
   }
   catch(Exception e) {
@@ -63,4 +74,12 @@ void requestSocketRespondAndMessage(InetAddress host, int port, String keyword) 
     }
     communication = false;
   }
+}
+
+void mousePressed() {
+  myPort.write("1");
+}
+
+void keyPressed() {
+  myPort.write("0");
 }

@@ -3,7 +3,9 @@
 #include <AccelStepper.h>
 #include <AFMotor.h>
 
+boolean run = false;
 
+String quan;
 // Number of steps per output rotation
 // Change this as per your motor's specification (200 default for our motor)
 const int stepsPerRevolution = 200;
@@ -34,10 +36,26 @@ void setup() {
 } 
 
 void loop() {
-  startMotor(1);
+  if(run) startMotor(1);
+  if(!run) motor.step(0, FORWARD, SINGLE);
+  if(Serial.available()>0){
+    String state = Serial.read();
 
+    if(state == "1"){
+      run = true;
+    }
 
-  delay(5UL*60UL*60UL*1000UL); // wait 5 hours to run check again to optimize performance and reduce failure rate
+    if(state == "0"){
+      run = false;
+    }
+
+    // new quantity received?
+    if(state.startsWith("quan:")){
+      String data = state.split(":");
+      //apply new data to quan var
+        quan = data[1];
+    }
+  }
 }
 
 
@@ -55,8 +73,4 @@ void startMotor(int rpm){
 
  // statement on how long its gonna run then use the method stopMotor when done.
   motor.step(rpm, FORWARD, SINGLE);
-}
-
-void stopMotor(){
-  motor.step(0);
 }
