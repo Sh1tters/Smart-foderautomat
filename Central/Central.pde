@@ -28,6 +28,8 @@ void setup() {
 }
 
 void draw() {
+  
+  // check if the time is up to fill up food
   try {
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
     LocalDateTime now = LocalDateTime.now();
@@ -36,15 +38,44 @@ void draw() {
     if (dtf.format(now).equals(scheduledTimeToEat)) {
       // request how long it should spin
       requestSocketRespondAndMessage(InetAddress.getLocalHost(), 7777, "quantity");
-        myPort.write("1");
-        // fill up now
-        myPort.write("quan:"+quantityOfFood);
+      // fill up now
+      myPort.write("quan:"+quantityOfFood);
+      myPort.write("1");
     }
   }
-  catch(Exception e) {
+  catch(Exception e) {  
+    
+    
     e.printStackTrace();
   }
+
+  // send last time fed to app
+  if (myPort.available()>0) {
+    val=myPort.readStringUntil('\n');
+    println(val);
+    if (val.equals("%")) {
+      try {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+
+        String time = dtf.format(now);
+
+        // connect to socket
+        socket = new Socket(InetAddress.getLocalHost(), 7777);
+        if (socket.isConnected()) {
+          // Send a message to the client application
+          ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+          oos.writeObject("last time fed: "+time);
+          oos.close();
+        }
+      }
+      catch(Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
 }
+
 
 void requestSocketRespondAndMessage(InetAddress host, int port, String keyword) {
   if (communication) {
@@ -77,7 +108,8 @@ void requestSocketRespondAndMessage(InetAddress host, int port, String keyword) 
 }
 
 void mousePressed() {
-  myPort.write("1");
+//  myPort.write("q:14:23");
+myPort.write("1");
 }
 
 void keyPressed() {

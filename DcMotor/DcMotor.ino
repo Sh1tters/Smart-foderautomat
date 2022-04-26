@@ -30,7 +30,6 @@ AccelStepper stepper(forwardstep, backwardstep); // use functions to step
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("(!) Stepper has started (!)");
 
   motor.setSpeed(50);  // 50 rpm
 } 
@@ -39,7 +38,7 @@ void loop() {
   if(run) startMotor(1);
   if(!run) motor.step(0, FORWARD, SINGLE);
   if(Serial.available()>0){
-    String state = Serial.read();
+    String state = Serial.readString();
 
     if(state == "1"){
       run = true;
@@ -50,10 +49,11 @@ void loop() {
     }
 
     // new quantity received?
-    if(state.startsWith("quan:")){
-      String data = state.split(":");
+    if(state.startsWith("q:")){
+      String data = state.substring(2,7);
       //apply new data to quan var
-        quan = data[1];
+        quan = data;
+        Serial.println(quan);
     }
   }
 }
@@ -73,4 +73,6 @@ void startMotor(int rpm){
 
  // statement on how long its gonna run then use the method stopMotor when done.
   motor.step(rpm, FORWARD, SINGLE);
+
+  Serial.println("%");
 }
