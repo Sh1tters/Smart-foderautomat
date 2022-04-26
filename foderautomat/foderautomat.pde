@@ -263,6 +263,14 @@ class ConnectionHandler implements Runnable {
 
           println("(!) Sent back to client: " + cdb.requestDcMotorSumOfAllTime() + " (!)");
         }
+        
+        //DC MOTOR
+        if(message.startsWith("last_time_fed:")){
+          println("(!) last time fed information received. Appending to data sheet now (!)");
+          String[] data = message.split(":");
+          
+          cdb.LastTimeFedAppendData(data[1]);       
+        }
 
         //WEIGHT SENSOR
         if (message.startsWith("InfoFromWeightSensor:")) {

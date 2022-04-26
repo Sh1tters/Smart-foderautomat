@@ -4,6 +4,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
+import java.io.FileWriter;
+import java.io.*;
+FileWriter fw;
+BufferedWriter bw;
 
 PrintWriter output;
 
@@ -129,6 +133,29 @@ class communicationDatabase {
     sum2 = sum2 / hits.size();
 
     return sum1 + ":" + sum2;
+  }
+
+  void LastTimeFedAppendData(String time) {
+    datafileExist();
+
+    try {
+      File file = new File(dataPath("")+"\\data.txt");
+
+      FileWriter fw = new FileWriter(file, true);///true = append
+      BufferedWriter bw = new BufferedWriter(fw);
+      PrintWriter pw = new PrintWriter(bw);
+
+      Date date = new Date();
+      SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd");
+
+      pw.write(format.format(date)+"/"+time+"/last_fed_time");
+
+      pw.close();
+    }
+    catch(IOException ioe) {
+      System.out.println("Exception ");
+      ioe.printStackTrace();
+    }
   }
 
   void datafileExist() {
