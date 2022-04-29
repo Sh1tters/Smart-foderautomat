@@ -32,6 +32,9 @@ class dashboarditems {
   }
 
   void loadData() {
+    sidst_spist = "00:00";
+    gen_spist = "00:00";
+    weight = 0.;
     // what date is selected?
     if (selected.equals("one")) {
       String[] rawdata = loadStrings("data.txt");
@@ -263,4 +266,4 @@ class dashboarditems {
       }
     }
   }
-}
+} 
