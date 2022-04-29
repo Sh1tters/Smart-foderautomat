@@ -37,6 +37,7 @@ class dashboarditems {
   void loadData() {
     sidst_spist = "00:00";
     gen_spist = "00:00";
+    foderAmount = "0";
     weight = 0.;
     // what date is selected?
     if (selected.equals("one")) {
@@ -61,7 +62,6 @@ class dashboarditems {
             weight = temp;
           }
           if (raw[2].equals("haeldt_op")) {
-
             foderAmount = cdb.getFoodAmountFilledUp(3, 1000 * 60 * 60 * 24, simpleDateFormat);
           }
         }

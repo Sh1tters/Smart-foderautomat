@@ -20,6 +20,7 @@ float n, r, t;
 
 navigationbar nav;
 settings st;
+information in;
 fragments frag;
 database db;
 dashboarditems dbi;
@@ -30,7 +31,7 @@ ArrayList<splash> splashAni = new ArrayList<splash>();
 PFont Segoe, SegoeBold, bold;
 PImage home, settings, info, home_s, settings_s, info_s, datoColWhite, datoColBlue, Oversigt, background, 
   kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug, clock, line, 
-  automatiskfodring, rekalibrer, switchOn, switchOff, switchButton, bigHud, smallHud;
+  automatiskfodring, rekalibrer, switchOn, switchOff, switchButton, bigHud, smallHud, on, off, smallHud_info;
 PImage[] datesWhite = new PImage[4];
 String nav_active_item = "Home";
 boolean firstrun;
@@ -39,6 +40,10 @@ int y, x, w, h;
 
 void preload() {
   // runs on a different thread
+  on = loadImage("polyON.png");
+  on.resize(60, 60);
+  off = loadImage("polyOFF.png");
+  off.resize(60, 60);
   automatiskfodring = loadImage("Automatisk fodring.png");
   automatiskfodring.resize(350, 75);
   rekalibrer = loadImage("Rekalibrer.png");
@@ -53,6 +58,8 @@ void preload() {
   bigHud.resize(179*5, 250);
   smallHud = loadImage("Rectangle 34.png");
   smallHud.resize(179*3, 250);
+  smallHud_info = loadImage("Rectangle 34.png");
+  smallHud_info.resize(190*4, 800);
   home = loadImage("home.png");
   settings = loadImage("settings.png");
   info = loadImage("info.png");
@@ -94,7 +101,8 @@ void preload() {
   Segoe = createFont("Segoe UI", 32);
   SegoeBold = createFont("Segoe UI Bold", 70);
   bold = createFont("Arial Bold", 40);
-
+  
+  
   preload = false;
 }
 
@@ -112,17 +120,21 @@ void setup() {
   // fix orientation of the phone to portrait and avoid auto-rotate(which restarts the app):
   orientation(PORTRAIT);
 
+  
   nav = new navigationbar();
   frag = new fragments();
   db = new database();
   cdb = new communicationDatabase();
   dbi = new dashboarditems();
+  in = new information();
   st = new settings();
   splash = new splash[unit];
+  
   n = 80;
   r = 200;
 
 
+  // database file exist-?
   if (!db.isFileCreated()) {
     db.createFile();
   }

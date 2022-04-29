@@ -217,7 +217,8 @@ class communicationDatabase {
       // find keyword
       if (raw[0].equals(stringDate)) {
         if (raw[2].equals("haeldt_op")) {
-          foder+=foder;
+          int value = parseInt(raw[1]);
+          foder+=value;
         }
       }
     }

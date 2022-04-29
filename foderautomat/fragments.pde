@@ -99,7 +99,7 @@ class fragments {
  
 
   void Finfo() {
-
+    in.view();
     loading = false;
   }
   

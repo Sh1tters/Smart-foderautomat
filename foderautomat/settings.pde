@@ -1,6 +1,6 @@
 class settings {
   int time;
-  int rekaliX = 600;
+  int rekaliY = 600;
   boolean active = true;
 
   void view() {
@@ -10,9 +10,7 @@ class settings {
 
   void settings_layout() {
     String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
-    println(rawdata.length);
     String[] raw;
-    println(rawdata);
     for (int i = 0; i < rawdata.length; i++) {
       raw = split(rawdata[i], ":");
 
@@ -24,15 +22,15 @@ class settings {
         } else active = true;
       }
     }
-    if (active) rekaliX = 600;
-    else rekaliX = 1200;
+    if (active) rekaliY = 600;
+    else rekaliY = 1200;
     image(bigHud, width/2, 300);
-    image(bigHud, width/2, rekaliX);
+    image(bigHud, width/2, rekaliY);
 
     fill(#613CC6);
     textFont(bold, 40);
     text("Automatisk fodring", width/2-125, 300);
-    text("Rekalibrer", width/2-200, rekaliX);
+    text("Rekalibrer", width/2-200, rekaliY);
     //  automatiskfodring, rekalibrer, switchOn, switchOff, switchButton, bigHud, smallHud;
     if (active) {
       image(switchOn, width/2+250, 300);
@@ -40,13 +38,18 @@ class settings {
     } else {
       image(switchOff, width/2+250, 300);
       image(switchButton, width/2+210, 300);
+
+      image(smallHud, width/2-125, 600);
+      image(smallHud, width/2-125, 900);
+
+      fill(#613CC6);
+      text("Indsil tid til fodring", width/2-150, 600);
+      text("S"+char(230)+"t m"+char(230)+"ngde af mad", width/2-125, 900);
     }
   }
 
   void settings_actions() {
     if (mouseX > width/2+180 && mouseX < width/2+180 + 200 && mouseY > 240 && mouseY < 240 + 150) {
-      println("debug");
-
       if (active) {
         active = false;
         String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
@@ -63,7 +66,6 @@ class settings {
         }
         // save the file
         saveStrings("/data/user/0/processing.test.foderautomat/files/database.txt", rawdata);
-        delay(1000);
       } else {
         active = true;
         String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
@@ -82,15 +84,8 @@ class settings {
         }
         // save the file
         saveStrings("/data/user/0/processing.test.foderautomat/files/database.txt", rawdata);
-        delay(1000);
-
-        String[] test = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
-        println("1.");
-        println(test);
-        String[] lol = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
-        println("2. ");
-        println(lol);
       } 
+      delay(500);
       mouseX = 10000;
     }
   }
