@@ -1,3 +1,2 @@
 FirstRun:false
-test:dawlodlwao
-lol:false
+Auto:false

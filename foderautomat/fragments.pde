@@ -41,7 +41,7 @@ class fragments {
     }
 
     // show dashboard items
-    dbi.setup();
+    dbi.view();
   }
 
 
@@ -93,14 +93,17 @@ class fragments {
   }
 
   void Fsettings() {
-
+    st.view();
     loading = false;
   }
+ 
 
   void Finfo() {
 
     loading = false;
   }
+  
+  
 
   void setText(int numdate, int x, int y, int y2) {
     String date = findPrevDay(today, numdate).toString();
