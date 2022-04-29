@@ -16,7 +16,7 @@ PrintWriter output;
 class database {
 
   boolean firstrun() {
-    String[] rawdata = loadStrings(dataPath("")+"\\database.txt");
+    String[] rawdata = loadStrings("database.txt");
     String[] raw;
     for (int i = 0; i < rawdata.length; i++) {
       raw = split(rawdata[i], ":");
@@ -33,35 +33,48 @@ class database {
     return false;
   }
 
+  String isAutoOn() {
+    String on = "false";
+    String[] rawdata = loadStrings("database.txt");
+    String[] raw;
+    println(rawdata.length);
+    for (int i = 0; i < rawdata.length; i++) {
+      raw = split(rawdata[i], ":");
+      // find keyword
+      if (raw[0].equals("Auto")) {
+        // find value
+        if (raw[1].equals("true")) {
+          on = "true";
+        }
+      }
+    }
+    return on;
+  }
+
   void requestData() {
-    String[] rawdata = loadStrings(dataPath("")+"\\database.txt");
+    String[] rawdata = loadStrings("database.txt");
     for (int i = 0; i < rawdata.length; i++) {
       println(rawdata[i]);
     }
   }
 
   void findandchangevalue(String keyword, String newValue) {
-    String[] rawdata = loadStrings(dataPath("")+"\\database.txt");
+    String[] rawdata = loadStrings("database.txt");
     String[] raw;
     for (int i = 0; i < rawdata.length; i++) {
       raw = split(rawdata[i], ":");
 
       // find keywords
       if (raw[0].equals(keyword)) {
-
-        // find line and change it
-        if (rawdata[i].equals(raw[0]+":"+raw[1])) {
           rawdata[i] = raw[0]+":"+newValue;
-        }
       }
     }
-
     // save the file
-    saveStrings(dataPath("")+"\\database.txt", rawdata);
+    saveStrings("database.txt", rawdata);
   }
 
   boolean isFileCreated() {
-    File f = dataFile(dataPath("")+"\\database.txt");
+    File f = dataFile("/data/user/0/processing.test.foderautomat/files/database.txt");
     boolean exist = f.isFile();
 
     if (exist) {
@@ -71,7 +84,12 @@ class database {
   }
 
   void createFile() {
-    output = createWriter(dataPath("")+"\\database.txt");
+    output = createWriter("/data/user/0/processing.test.foderautomat/files/database.txt");
+    output.write("FirstRun:true\n");
+    output.write("Auto:true\n");
+    output.flush();
+    output.close();
+    
   }
 }
 
@@ -110,32 +128,12 @@ class communicationDatabase {
     return sum1 + ":" + sum2;
   }
 
-
-  void requestDcMotorSumOfADayAndSetTextOnApp() {
-    int sum1 = 0;
-    int sum2 = 0;
-    datafileExist();
-
-
-    String[] rawdata = loadStrings(dataPath("")+"\\data.txt");
-    String[] filtered;
-    String dateFiltered;
-    ArrayList<String> hits = new ArrayList<String>();
-    for (int i = 0; i < rawdata.length; i++) {
-      filtered = split(rawdata[i], "/");
-
-      if (filtered[2].equals("time")) {
-        hits.add(filtered[1]);
-      }
-    }
-  }
-
   String requestDcMotorSumOfAllTime() {
     int sum1 = 0;
     int sum2 = 0;
     datafileExist();
 
-    String[] rawdata = loadStrings(dataPath("")+"\\data.txt");
+    String[] rawdata = loadStrings("data.txt");
     String[] filtered;
     ArrayList<String> hits = new ArrayList<String>();
     for (int i = 0; i < rawdata.length; i++) {
@@ -164,7 +162,7 @@ class communicationDatabase {
     datafileExist();
 
     try {
-      File file = new File(dataPath("")+"\\data.txt");
+      File file = new File("data.txt");
 
       FileWriter fw = new FileWriter(file, true);///true = append
       BufferedWriter bw = new BufferedWriter(fw);
@@ -187,7 +185,7 @@ class communicationDatabase {
     datafileExist();
 
     try {
-      File file = new File(dataPath("")+"\\data.txt");
+      File file = new File("data.txt");
 
       FileWriter fw = new FileWriter(file, true);///true = append
       BufferedWriter bw = new BufferedWriter(fw);
@@ -206,13 +204,48 @@ class communicationDatabase {
     }
   }
 
+  String getFoodAmountFilledUp(int day, long DAY_IN_MS, SimpleDateFormat simpleDateFormat) {
+    int foder = 0;
+    String[] rawdata = loadStrings("data.txt");
+    String[] raw;
+    for (int i = 0; i < rawdata.length; i++) {
+      raw = split(rawdata[i], "/");
+
+      Date d = new Date(System.currentTimeMillis() - (day * DAY_IN_MS));
+      String stringDate= simpleDateFormat.format(d);
+
+      // find keyword
+      if (raw[0].equals(stringDate)) {
+        if (raw[2].equals("haeldt_op")) {
+          foder+=foder;
+        }
+      }
+    }
+
+    return ""+foder;
+  }
+
+  double calculatePercentage(double obtained, double total) {
+    return obtained * 100 / total;
+  }
+
+  String getProcentOf2Numers(int max, String current) {
+    double obtained = Double.parseDouble(current);
+    double total =  max;
+
+    int val = (int)calculatePercentage(obtained, total);
+
+    String value = nf(val, 0, 1);
+    return value + "%";
+  }
+
   void datafileExist() {
-    File f = dataFile(dataPath("")+"\\data.txt");
+    File f = dataFile("data.txt");
     boolean exist = f.isFile();
 
     if (exist) {
     } else {
-      output = createWriter(dataPath("")+"\\data.txt");
+      output = createWriter("data.txt");
     }
   }
 }

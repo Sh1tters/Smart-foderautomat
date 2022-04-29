@@ -19,6 +19,7 @@ boolean preload = true;
 float n, r, t;
 
 navigationbar nav;
+settings st;
 fragments frag;
 database db;
 dashboarditems dbi;
@@ -26,20 +27,32 @@ communicationDatabase cdb;
 splash[] splash;
 int unit = 3;
 ArrayList<splash> splashAni = new ArrayList<splash>();
-PFont Segoe, SegoeBold;
+PFont Segoe, SegoeBold, bold;
 PImage home, settings, info, home_s, settings_s, info_s, datoColWhite, datoColBlue, Oversigt, background, 
-  kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug, clock, line;
+  kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug, clock, line, 
+  automatiskfodring, rekalibrer, switchOn, switchOff, switchButton, bigHud, smallHud;
 PImage[] datesWhite = new PImage[4];
 String nav_active_item = "Home";
 boolean firstrun;
 color c1, c2;
 int y, x, w, h;
 
-void firstrunpreload() {
-}
-
 void preload() {
   // runs on a different thread
+  automatiskfodring = loadImage("Automatisk fodring.png");
+  automatiskfodring.resize(350, 75);
+  rekalibrer = loadImage("Rekalibrer.png");
+  rekalibrer.resize(350, 75);
+  switchOn = loadImage("Rectangle 32.png");
+  switchOn.resize(200, 150);
+  switchOff = loadImage("sm.png");
+  switchOff.resize(200, 150);
+  switchButton = loadImage("Rectangle 33.png");
+  switchButton.resize(125, 150);
+  bigHud = loadImage("Rectangle 31.png");
+  bigHud.resize(179*5, 250);
+  smallHud = loadImage("Rectangle 34.png");
+  smallHud.resize(179*3, 250);
   home = loadImage("home.png");
   settings = loadImage("settings.png");
   info = loadImage("info.png");
@@ -80,6 +93,7 @@ void preload() {
 
   Segoe = createFont("Segoe UI", 32);
   SegoeBold = createFont("Segoe UI Bold", 70);
+  bold = createFont("Arial Bold", 40);
 
   preload = false;
 }
@@ -103,6 +117,7 @@ void setup() {
   db = new database();
   cdb = new communicationDatabase();
   dbi = new dashboarditems();
+  st = new settings();
   splash = new splash[unit];
   n = 80;
   r = 200;
@@ -149,7 +164,7 @@ void draw() {
       } else {
         frag.Finfo();
       }
-      nav.setup();
+      nav.view();
     }
 
     if (loading) {
@@ -158,7 +173,7 @@ void draw() {
 
 
       //show something
-      nav.setup();
+      nav.view();
     }
   }
 }

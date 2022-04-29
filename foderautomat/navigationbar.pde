@@ -1,6 +1,6 @@
 class navigationbar {
 
-  void setup() {
+  void view() {
     bar_background();
     init_fragments();
     ActionEvent();

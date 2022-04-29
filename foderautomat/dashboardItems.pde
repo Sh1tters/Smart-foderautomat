@@ -4,6 +4,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 float weight = 0.;
 String sidst_spist = "00:00", gen_spist = "00:00"; // format: 00:00
+String ugentlig_forbrug = "0", ugentlig_forbrug_penge = "0";
+int max_mad = 350;
+String foderAmount = "0";
 
 class dashboarditems {
   long DAY_IN_MS = 1000 * 60 * 60 * 24;
@@ -16,12 +19,12 @@ class dashboarditems {
   boolean cd = false;
   color onCD = #613CC6;
   color offCD = #9482C4;
-  void setup() {
+  void view() {
     // load new data
     loadData();
 
     layout();
-    dashboard_spist();
+    dashboard_foder();
     dashboard_vaegt();
     dashboard_feednow();
     dashboard_feednow_actionHandler();
@@ -57,6 +60,10 @@ class dashboarditems {
             float temp = parseFloat(raw[1]);
             weight = temp;
           }
+          if (raw[2].equals("haeldt_op")) {
+
+            foderAmount = cdb.getFoodAmountFilledUp(3, 1000 * 60 * 60 * 24, simpleDateFormat);
+          }
         }
       }
     } else if (selected.equals("two")) {
@@ -79,6 +86,9 @@ class dashboarditems {
           if (raw[2].equals("vaegt")) {
             float temp = parseFloat(raw[1]);
             weight = temp;
+          }
+          if (raw[2].equals("haeldt_op")) {
+            foderAmount = cdb.getFoodAmountFilledUp(2, 1000 * 60 * 60 * 24, simpleDateFormat);
           }
         }
       }
@@ -103,6 +113,9 @@ class dashboarditems {
             float temp = parseFloat(raw[1]);
             weight = temp;
           }
+          if (raw[2].equals("haeldt_op")) {
+            foderAmount = cdb.getFoodAmountFilledUp(1, 1000 * 60 * 60 * 24, simpleDateFormat);
+          }
         }
       }
     } else if (selected.equals("four")) {
@@ -126,6 +139,9 @@ class dashboarditems {
             float temp = parseFloat(raw[1]);
             weight = temp;
           }
+          if (raw[2].equals("haeldt_op")) {
+            foderAmount = cdb.getFoodAmountFilledUp(0, 1000 * 60 * 60 * 24, simpleDateFormat);
+          }
         }
       }
     }
@@ -145,7 +161,7 @@ class dashboarditems {
     //image(kitty_forbrug, 560, 1780);
     textAlign(CENTER);
     textFont(SegoeBold, 70);
-    text("Spist", width/5-20, 700);
+    text("Foder", width/5-20, 700);
     text("V"+char(230)+"gt", width-365, 700); // char(230) = 'æ'
     text("Tid", width/5-55, 1335);
     text("Forbrug", width-325, 1335);
@@ -156,32 +172,28 @@ class dashboarditems {
     image(kitty_spist, width/5+200, 690);
   }
 
-  void dashboard_handler() {
-  }
-
-  void dashboard_actions() {
-  }
-
-  void dashboard_spist() {
-    int filled = 100; // controls how much is filled in the diagram
+  void dashboard_foder() {
+    int filled = max_mad; // controls how much is filled in the diagram
+    int current = parseInt(foderAmount);
     noStroke();
     fill(#22E763);
-    rect(width/5-100, 800, filled, 85, 50);
+    rect(width/5-100, 800, current, 85, 50);
 
     noFill();
     stroke(#707070);
-    strokeWeight(8);
-    rect(width/5-100, 800, 350, 85, 50);
+   // strokeWeight(8);
+    rect(width/5-100, 800, filled, 85, 50);
 
     fill(0);
     textAlign(CENTER);
     textFont(SegoeBold, 50);
-    text("25%", width/5+90, 860);
+    text(cdb.getProcentOf2Numers(max_mad, foderAmount), width/5+90, 860);
 
     fill(0);
     textAlign(CENTER);
     textFont(SegoeBold, 65 );
-    text("50/250 g", width/5+90, 1000);
+    text(foderAmount+"/350 g", width/5+90, 1000);
+    
   }
 
   void dashboard_vaegt() {
@@ -201,6 +213,9 @@ class dashboarditems {
     noStroke();
     ellipseMode(CENTER);
     ellipse(width-200, 1035, 35, 35);
+    
+    strokeWeight(0);
+    
   }
 
   void dashboard_tid() {
@@ -219,6 +234,13 @@ class dashboarditems {
   void dashboard_forbrug() {
     image(line, width/5+570, 1400);
     image(line, width/5+570, 1600);
+
+    fill(0);
+    textFont(SegoeBold, 50);
+    text("Ugentlig forbrug:", width/5+570, 1450);
+    text("Max. " + ugentlig_forbrug + " g foder", width/5+570, 1525);
+    text("Ugentlig forbrug:", width/5+570, 1650);
+    text(ugentlig_forbrug_penge + " kr.", width/5+570, 1725);
   }
 
   void dashboard_feednow() {
