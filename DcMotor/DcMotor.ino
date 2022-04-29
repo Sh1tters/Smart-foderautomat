@@ -14,17 +14,17 @@ const int stepsPerRevolution = 200;
 AF_Stepper motor(stepsPerRevolution, 2);
 
 void forwardstep() {
-  motor.onestep(FORWARD, SINGLE);
+  motor.step(10, FORWARD, SINGLE);
 }
 void backwardstep() {
-  motor.onestep(BACKWARD, SINGLE);
+  motor.step(10, BACKWARD, SINGLE);
 }
 AccelStepper stepper(forwardstep, backwardstep); // use functions to step
 
 /**
- * @brief 
+ * @brief 0
  * 1. Send socket message to app
- * 2. Retrieve respond of clock time when motor should start
+ * 2. Retrieve respond of clock 0time when motor should start
  * 
  */
 
@@ -35,8 +35,8 @@ void setup() {
 } 
 
 void loop() {
-  if(run) startMotor(1);
-  if(!run) motor.step(0, FORWARD, SINGLE);
+  if(run) startMotor(10);
+  if(!run) motor.step(0, BACKWARD, SINGLE);
   if(Serial.available()>0){
     String state = Serial.readString();
 
@@ -72,7 +72,7 @@ void startMotor(int rpm){
   */
 
  // statement on how long its gonna run then use the method stopMotor when done.
-  motor.step(rpm, FORWARD, SINGLE);
+  motor.step(rpm, BACKWARD, SINGLE);
 
   Serial.println("%");
 }
