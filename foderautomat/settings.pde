@@ -13,8 +13,6 @@ class settings {
     String[] raw;
     for (int i = 0; i < rawdata.length; i++) {
       raw = split(rawdata[i], ":");
-
-
       // find keywords
       if (raw[0].equals("Auto")) {
         if (raw[1].equals("false")) {
@@ -43,7 +41,7 @@ class settings {
       image(smallHud, width/2-125, 900);
 
       fill(#613CC6);
-      text("Indsil tid til fodring", width/2-150, 600);
+      text("Indstil tid til fodring", width/2-150, 600);
       text("S"+char(230)+"t m"+char(230)+"ngde af mad", width/2-125, 900);
     }
   }
@@ -85,6 +83,15 @@ class settings {
         // save the file
         saveStrings("/data/user/0/processing.test.foderautomat/files/database.txt", rawdata);
       } 
+      delay(500);
+      mouseX = 10000;
+    }
+
+    // recalibrate
+    // openKeyboard();
+    if (mouseX > width/2-425 && mouseX < width/2-425 + 165*5 && mouseY > rekaliY-100 && mouseY < rekaliY-100 + 200) {
+      nav_active_item = "Recalibrate";
+      rc.serial = "";
       delay(500);
       mouseX = 10000;
     }

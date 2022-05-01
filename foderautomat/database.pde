@@ -16,7 +16,7 @@ PrintWriter output;
 class database {
 
   boolean firstrun() {
-    String[] rawdata = loadStrings("database.txt");
+    String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
     String[] raw;
     for (int i = 0; i < rawdata.length; i++) {
       raw = split(rawdata[i], ":");
@@ -35,7 +35,7 @@ class database {
 
   String isAutoOn() {
     String on = "false";
-    String[] rawdata = loadStrings("database.txt");
+    String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
     String[] raw;
     println(rawdata.length);
     for (int i = 0; i < rawdata.length; i++) {
@@ -52,25 +52,28 @@ class database {
   }
 
   void requestData() {
-    String[] rawdata = loadStrings("database.txt");
+    String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
     for (int i = 0; i < rawdata.length; i++) {
-      println(rawdata[i]);
+      String[] raw = split(rawdata[i], ":");
+      if(raw[0].equals("Serial")){
+        println(raw[1]);
+      }
     }
   }
 
   void findandchangevalue(String keyword, String newValue) {
-    String[] rawdata = loadStrings("database.txt");
+    String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
     String[] raw;
     for (int i = 0; i < rawdata.length; i++) {
       raw = split(rawdata[i], ":");
 
       // find keywords
       if (raw[0].equals(keyword)) {
-          rawdata[i] = raw[0]+":"+newValue;
+        rawdata[i] = raw[0]+":"+newValue;
       }
     }
     // save the file
-    saveStrings("database.txt", rawdata);
+    saveStrings("/data/user/0/processing.test.foderautomat/files/database.txt", rawdata);
   }
 
   boolean isFileCreated() {
@@ -87,9 +90,9 @@ class database {
     output = createWriter("/data/user/0/processing.test.foderautomat/files/database.txt");
     output.write("FirstRun:true\n");
     output.write("Auto:true\n");
+    output.write("Serial:0000\n");
     output.flush();
     output.close();
-    
   }
 }
 

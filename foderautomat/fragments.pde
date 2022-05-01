@@ -49,29 +49,25 @@ class fragments {
     // four = current date
     
     int x = 133 / 4, y = 180, w = 200, h = 220;
-    //244,270
+    
     // date action event listener
     // first image
     if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
-      //image(datoColBlue, 133, 500);
       selected = "one";
     }
     x=133 + (addon - (w/2));
     // second image
     if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
-      //image(datoColBlue, 133 + addon, 500);
       selected = "two";
     }
     x=133 + (addon * 2 - (w/2));
     // third image
     if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
-      //image(datoColBlue, 133 + (addon * 2), 500);
       selected = "three";
     }
     x=133 + (addon * 3 - (w/2));
     // fourth image
     if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
-      //image(datoColBlue, 133 + (addon * 3), 500);
       selected = "four";
     }
   }

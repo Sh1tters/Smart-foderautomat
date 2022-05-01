@@ -19,6 +19,7 @@ boolean preload = true;
 float n, r, t;
 
 navigationbar nav;
+recalibrate rc;
 settings st;
 information in;
 fragments frag;
@@ -101,8 +102,8 @@ void preload() {
   Segoe = createFont("Segoe UI", 32);
   SegoeBold = createFont("Segoe UI Bold", 70);
   bold = createFont("Arial Bold", 40);
-  
-  
+
+
   preload = false;
 }
 
@@ -120,16 +121,17 @@ void setup() {
   // fix orientation of the phone to portrait and avoid auto-rotate(which restarts the app):
   orientation(PORTRAIT);
 
-  
+
   nav = new navigationbar();
   frag = new fragments();
   db = new database();
   cdb = new communicationDatabase();
   dbi = new dashboarditems();
   in = new information();
+  rc = new recalibrate();
   st = new settings();
   splash = new splash[unit];
-  
+
   n = 80;
   r = 200;
 
@@ -173,6 +175,8 @@ void draw() {
         frag.Fhome();
       } else if (nav_active_item == "Settings") {
         frag.Fsettings();
+      } else if (nav_active_item == "Recalibrate") {
+        rc.start();
       } else {
         frag.Finfo();
       }
@@ -188,6 +192,8 @@ void draw() {
       nav.view();
     }
   }
+
+  db.requestData();
 }
 
 void mousePressed() {
