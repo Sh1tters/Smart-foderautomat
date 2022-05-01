@@ -45,7 +45,7 @@ class information {
       image(smallHud_info, width/2-75, 1300);
       fill(#613CC6);
       textFont(bold, 60);
-      text("Instruktioner:", width/2-150, 1150);
+      text("Instruktioner:", width/2-150, 900);
     } else {
       image(on, width/2+300, 280);
       image(on, width/2+300, 600);
