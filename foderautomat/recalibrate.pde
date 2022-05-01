@@ -42,7 +42,7 @@ class recalibrate {
         if (cd_timeleft < 0) {
           loading = false;
           db.findandchangevalue("Serial", serial);
-          // send new serial to client
+          PORT = parseInt(serial);
           delay(750);
           nav_active_item = "Home";
         }

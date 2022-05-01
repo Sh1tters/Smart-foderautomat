@@ -12,7 +12,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.SocketAddress;
 
-private static final int PORT = 7777;
+public static int PORT = 0000;
 private ServerSocket server;
 
 boolean preload = true;
@@ -139,6 +139,14 @@ void setup() {
   // database file exist-?
   if (!db.isFileCreated()) {
     db.createFile();
+  }
+
+  String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
+  for (int i = 0; i < rawdata.length; i++) {
+    String[] raw = split(rawdata[i], ":");
+    if (raw[0].equals("Serial")) {
+      PORT = parseInt(raw[1]);
+    }
   }
 
   // start preload thread
@@ -270,6 +278,20 @@ class ConnectionHandler implements Runnable {
         // Read a message sent by client application
         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
         String message = (String) ois.readObject();
+
+        // Updater
+        if (message.equals("request update")) {
+          ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+          String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
+          for (int i = 0; i < rawdata.length; i++) {
+            String[] raw = split(rawdata[i], ":");
+            if (raw[0].equals("Serial")) {
+              oos.writeObject(raw[1]);
+            }
+          }
+          oos.close();
+        }
+
 
         //DC MOTOR
         if (message.equals("requesting information to dc motor module")) {

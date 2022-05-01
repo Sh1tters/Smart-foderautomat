@@ -21,31 +21,77 @@ String quantityOfFood = "";
 
 Serial myPort;
 String val;
+int serial = 0000;
+PrintWriter output;
 
 void setup() {
-  String portName = "COM8";
+  // get serial
+  File f = dataFile("database.txt");
+  boolean exist = f.isFile();
+
+  if (!exist) {
+    output = createWriter("database.txt");
+    output.write("Serial:0000");
+    output.flush();
+    output.close();
+  }
+
+
+  String portName = "COM8"; // default portname. If error occurs, change to "COM9"
   myPort = new Serial(this, portName, 115200);
 }
 
 void draw() {
-  
+  // check for updates to serial
+  String[] rawdata = loadStrings("database.txt");
+  for (int i = 0; i < rawdata.length; i++) {
+    String[] raw = split(rawdata[i], ":");
+    if (raw[0].equals("Serial")) {
+      serial = parseInt(raw[1]);
+    }
+  }
+
+  // request update from app
+  try {
+    // connect to socket
+    socket = new Socket(InetAddress.getLocalHost(), serial);
+    if (socket.isConnected()) {
+      // Send a message to the client application
+      ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+      oos.writeObject("request update");
+      oos.close();
+
+      // Read and display the response message sent by server application
+      ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+      String message = (String) ois.readObject();
+      updateFile(message);
+      ois.close();
+    }
+  }
+  catch(Exception e) {  
+
+
+    e.printStackTrace();
+  }
+
+
   // check if the time is up to fill up food
   try {
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
     LocalDateTime now = LocalDateTime.now();
 
-    requestSocketRespondAndMessage(InetAddress.getLocalHost(), 7777, "time");
+    requestSocketRespondAndMessage(InetAddress.getLocalHost(), serial, "time");
     if (dtf.format(now).equals(scheduledTimeToEat)) {
       // request how long it should spin
-      requestSocketRespondAndMessage(InetAddress.getLocalHost(), 7777, "quantity");
+      requestSocketRespondAndMessage(InetAddress.getLocalHost(), serial, "quantity");
       // fill up now
       myPort.write("quan:"+quantityOfFood);
       myPort.write("1");
     }
   }
   catch(Exception e) {  
-    
-    
+
+
     e.printStackTrace();
   }
 
@@ -61,7 +107,7 @@ void draw() {
         String time = dtf.format(now);
 
         // connect to socket
-        socket = new Socket(InetAddress.getLocalHost(), 7777);
+        socket = new Socket(InetAddress.getLocalHost(), serial);
         if (socket.isConnected()) {
           // Send a message to the client application
           ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
@@ -107,9 +153,24 @@ void requestSocketRespondAndMessage(InetAddress host, int port, String keyword) 
   }
 }
 
+void updateFile(String ser) {
+  String[] rawdata = loadStrings("database.txt");
+  String[] raw;
+  for (int i = 0; i < rawdata.length; i++) {
+    raw = split(rawdata[i], ":");
+
+    // find keywords
+    if (raw[0].equals("Serial")) {
+      rawdata[i] = raw[0]+":"+ser;
+    }
+  }
+  // save the file
+  saveStrings("database.txt", rawdata);
+}
+
 void mousePressed() {
-//  myPort.write("q:14:23");
-myPort.write("1");
+  //  myPort.write("q:14:23");
+  myPort.write("1");
 }
 
 void keyPressed() {

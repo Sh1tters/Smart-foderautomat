@@ -93,6 +93,7 @@ class settings {
       nav_active_item = "Recalibrate";
       rc.serial = "";
       rc.keyboard = false;
+      loading = false;
       delay(500);
       mouseX = 10000;
     }
