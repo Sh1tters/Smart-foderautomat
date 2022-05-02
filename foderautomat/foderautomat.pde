@@ -12,7 +12,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.SocketAddress;
 
-public static int PORT = 0000;
+public static int PORT = 49664;
 private ServerSocket server;
 
 boolean preload = true;
@@ -30,8 +30,8 @@ splash[] splash;
 int unit = 3;
 ArrayList<splash> splashAni = new ArrayList<splash>();
 PFont Segoe, SegoeBold, bold;
-PImage home, settings, info, home_s, settings_s, info_s, datoColWhite, datoColBlue, Oversigt, background,
-  kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug, clock, line,
+PImage home, settings, info, home_s, settings_s, info_s, datoColWhite, datoColBlue, Oversigt, background, 
+  kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug, clock, line, 
   automatiskfodring, rekalibrer, switchOn, switchOff, switchButton, bigHud, smallHud, on, off, smallHud_info;
 PImage[] datesWhite = new PImage[4];
 String nav_active_item = "Home";
@@ -152,12 +152,19 @@ void setup() {
   // start preload thread
   thread("preload");
 
+  
+
   // start coms
   thread("handleConnection");
 }
 
 
 void draw() {
+  try {
+ //   println("App: "+InetAddress.getByName("10.113.41.181"), PORT);
+  } 
+  catch(Exception e) {
+  }
   // background
   image(background, width/2, height/2);
   //makeGradientBackground();
@@ -236,15 +243,18 @@ void loadingAnimation() {
 void handleConnection() {
   try {
     // call constructor
-    server = new ServerSocket(PORT);
+    int backlog = 5;
+    //https://stackoverflow.com/questions/37420237/why-socket-does-not-connect-with-ip-instead-of-localhost
+    //https://stackoverflow.com/questions/8965155/cannot-assign-requested-address-using-serversocket-socketbind
+   //0.0.0.0:49664
+   server = new ServerSocket(5037, 0, InetAddress.getByName("10.113.9.221"));
   }
   catch (IOException e) {
     e.printStackTrace();
   }
-  println("(!) Server socket is bounded: " + server.isBound() + " (!)");
-  println("(!) Local Socket Address: "+ server.getLocalSocketAddress() +"(!)");
+  //println("(!) Server socket is bounded: " + server.isBound() + " (!)");
+  //println("(!) Local Socket Address: "+ server.getLocalSocketAddress() +"(!)");
   System.out.println("Waiting for client message...");
-
   // The server do a loop here to accept all connection initiated by the
   // client application.
   while (true) {
@@ -280,11 +290,10 @@ class ConnectionHandler implements Runnable {
         // Updater
         if (message.equals("request update")) {
           ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-          oos.writeObject(PORT+"");
-          println(PORT + " sent to client");
+          oos.writeObject(49664+"");
+          println(49664 + " sent to client");
           oos.close();
           ois.close();
-          server.close();
           thread("handleConnection");
         }
 

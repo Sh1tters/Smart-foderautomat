@@ -40,7 +40,7 @@ void setup() {
 
 
   String portName = "COM8"; // default portname. If error occurs, change to "COM9"
-  myPort = new Serial(this, portName, 115200);
+  //  myPort = new Serial(this, portName, 115200);
 }
 
 void draw() {
@@ -49,28 +49,27 @@ void draw() {
   for (int i = 0; i < rawdata.length; i++) {
     String[] raw = split(rawdata[i], ":");
     if (raw[0].equals("Serial")) {
-      serial = parseInt(raw[1]);
+      serial = 49664;
     }
   }
 
   if (millis() - timer >= 5000) {
     try {
       try {
-        println("debug");
-        println(serial);
+        //  println("Computer: " + InetAddress.getAllByName("localhost")[0], serial);
         // Connect to socket now
-        socket = new Socket(InetAddress.getLocalHost(), serial);
-
+        socket = new Socket("127.0.0.1", 5037);
+       println(socket.isBound());
         if (socket.isConnected()) {
-
           // Send a message to the client application
           ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
           oos.writeObject("request update");
 
+
           // Read and display the response message sent by server application
           ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
           String message = (String) ois.readObject();
-          println("current ser: "+serial);
+          println("current ser: "+49664);
           updateFile(message);
           serial = parseInt(message);
           println(serial);
@@ -89,47 +88,47 @@ void draw() {
 
 
   // check if the time is up to fill up food
-  try {
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-    LocalDateTime now = LocalDateTime.now();
+  //try {
+  //  DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+  //  LocalDateTime now = LocalDateTime.now();
 
-    requestSocketRespondAndMessage(InetAddress.getLocalHost(), serial, "time");
-    if (dtf.format(now).equals(scheduledTimeToEat)) {
-      // request how long it should spin
-      requestSocketRespondAndMessage(InetAddress.getLocalHost(), serial, "quantity");
-      // fill up now
-      myPort.write("quan:"+quantityOfFood);
-      myPort.write("1");
-    }
-  }
-  catch(Exception e) {
-    e.printStackTrace();
-  }
+  ////  requestSocketRespondAndMessage(InetAddress.getLocalHost(), serial, "time");
+  //  if (dtf.format(now).equals(scheduledTimeToEat)) {
+  //    // request how long it should spin
+  //    requestSocketRespondAndMessage(InetAddress.getLocalHost(), serial, "quantity");
+  //    // fill up now
+  //    myPort.write("quan:"+quantityOfFood);
+  //    myPort.write("1");
+  //  }
+  //}
+  //catch(Exception e) {
+  //  e.printStackTrace();
+  //}
 
   // send last time fed to app
-  if (myPort.available()>0) {
-    val=myPort.readStringUntil('\n');
-    if (val.equals("%")) {
-      try {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
+  //if (myPort.available()>0) {
+  //  val=myPort.readStringUntil('\n');
+  //  if (val.equals("%")) {
+  //    try {
+  //      DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+  //      LocalDateTime now = LocalDateTime.now();
 
-        String time = dtf.format(now);
+  //      String time = dtf.format(now);
 
-        // connect to socket
-        socket = new Socket(InetAddress.getLocalHost(), serial);
-        if (socket.isConnected()) {
-          // Send a message to the client application
-          ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-          oos.writeObject("last time fed: "+time);
-          oos.close();
-        }
-      }
-      catch(Exception e) {
-        e.printStackTrace();
-      }
-    }
-  }
+  //      // connect to socket
+  //      socket = new Socket(InetAddress.getLocalHost(), serial);
+  //      if (socket.isConnected()) {
+  //        // Send a message to the client application
+  //        ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+  //        oos.writeObject("last time fed: "+time);
+  //        oos.close();
+  //      }
+  //    }
+  //    catch(Exception e) {
+  //      e.printStackTrace();
+  //    }
+  //  }
+  //}
 }
 
 
@@ -138,7 +137,7 @@ void requestSocketRespondAndMessage(InetAddress host, int port, String keyword) 
     try {
       try {
         // Connect to socket now
-        socket = new Socket(host.getHostName(), port);
+        socket = new Socket("0.0.0.0", 49664);
 
         if (socket.isConnected()) {
 
@@ -206,9 +205,9 @@ void updateFile(String ser) {
 
 void mousePressed() {
   //  myPort.write("q:14:23");
-  myPort.write("1");
+  //myPort.write("1");
 }
 
 void keyPressed() {
-  myPort.write("0");
+  //myPort.write("0");
 }

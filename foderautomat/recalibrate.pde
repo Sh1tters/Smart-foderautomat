@@ -66,12 +66,12 @@ class recalibrate {
   void recalibrate_actions() {
     if (mouseX > width/2-425 && mouseX < width/2-425 + 165*5 && mouseY > 300 && mouseY < 300 + 200) {
       keyboard = true;
-    //  openKeyboard();
+      openKeyboard();
       mouseX = 30000; // reset mouse
     }
     if (mouseX > width/2-225 && mouseX < width/2-225 + 165*3 && mouseY > 700 && mouseY < 700 + 200) {
       loading = true;
-//  closeKeyboard();
+      closeKeyboard();
       mouseX = 30000; //reset mouse
     }
   }
