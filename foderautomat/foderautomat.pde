@@ -104,6 +104,7 @@ void preload() {
   bold = createFont("Arial Bold", 40);
 
 
+
   preload = false;
 }
 
@@ -152,7 +153,7 @@ void setup() {
   // start preload thread
   thread("preload");
 
-  
+
 
   // start coms
   thread("handleConnection");
@@ -160,52 +161,47 @@ void setup() {
 
 
 void draw() {
-  try {
- //   println("App: "+InetAddress.getByName("10.113.41.181"), PORT);
-  } 
-  catch(Exception e) {
+  // Update serial
+  String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
+  for (int i = 0; i < rawdata.length; i++) {
+    String[] raw = split(rawdata[i], ":");
+    if (raw[0].equals("Serial")) {
+      PORT = parseInt(raw[1]);
+    }
   }
+
   // background
   image(background, width/2, height/2);
   //makeGradientBackground();
+  if (preload) {
+    // preload
+    loadingAnimation();
 
-  //  if (db.firstrun()) {
-  if (1 == 2) {
-    // First ever run
-
-
-    db.findandchangevalue("FirstRun", "false");
+    println("loading...");
   } else {
-    if (preload) {
-      // preload
-      loadingAnimation();
-
-      println("loading...");
+    // file created? (may have been deleted)
+    if (!db.isFileCreated()) {
+      db.createFile();
+    }
+    if (nav_active_item == "Home") {
+      frag.Fhome();
+    } else if (nav_active_item == "Settings") {
+      frag.Fsettings();
+    } else if (nav_active_item == "Recalibrate") {
+      rc.start();
     } else {
-      // file created? (may have been deleted)
-      if (!db.isFileCreated()) {
-        db.createFile();
-      }
-      if (nav_active_item == "Home") {
-        frag.Fhome();
-      } else if (nav_active_item == "Settings") {
-        frag.Fsettings();
-      } else if (nav_active_item == "Recalibrate") {
-        rc.start();
-      } else {
-        frag.Finfo();
-      }
-      nav.view();
+      frag.Finfo();
     }
+    nav.view();
+  }
 
-    if (loading) {
-      image(background, width/2, height/2);
-      loadingAnimation();
+  if (loading) {
+    image(background, width/2, height/2);
+    loadingAnimation();
 
 
-      //show something
-      nav.view();
-    }
+    //show something
+    nav.view();
   }
 }
 
@@ -246,11 +242,12 @@ void handleConnection() {
     int backlog = 5;
     //https://stackoverflow.com/questions/37420237/why-socket-does-not-connect-with-ip-instead-of-localhost
     //https://stackoverflow.com/questions/8965155/cannot-assign-requested-address-using-serversocket-socketbind
-   //0.0.0.0:49664
-   server = new ServerSocket(5037, 0, InetAddress.getByName("10.113.9.221"));
+    //0.0.0.0:49664
+    // home connection: 192.168.1.141:PORT
+    println("Starting up server...");
+    server = new ServerSocket(PORT, backlog, InetAddress.getByName("192.168.1.141"));
   }
   catch (IOException e) {
-    e.printStackTrace();
   }
   //println("(!) Server socket is bounded: " + server.isBound() + " (!)");
   //println("(!) Local Socket Address: "+ server.getLocalSocketAddress() +"(!)");
@@ -260,11 +257,12 @@ void handleConnection() {
   while (true) {
     try {
       Socket socket = server.accept();
+      println();
+      println("(!)=================LOG================(!)");
       println("(!) New connection established... (!)");
       new ConnectionHandler(socket);
     }
     catch (IOException e) {
-      e.printStackTrace();
     }
   }
 }
@@ -290,16 +288,17 @@ class ConnectionHandler implements Runnable {
         // Updater
         if (message.equals("request update")) {
           ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-          oos.writeObject(49664+"");
-          println(49664 + " sent to client");
-          oos.close();
-          ois.close();
+          oos.writeObject(PORT+"");
+          println(PORT + " sent to client");
+          db.findandchangevalue("Serial", PORT+"");
+          server.close();
+          delay(500);
           thread("handleConnection");
         }
 
 
         //DC MOTOR
-        if (message.equals("requesting information to dc motor module")) {
+        if (message.equals("!requesting time to dc motor module")) {
           println("(!) Received a request from DC Motor! Sending back information.. (!)");
 
           // retrieve information from dc motor txt document
@@ -335,14 +334,13 @@ class ConnectionHandler implements Runnable {
 
         println();
         println("(!)=================LOG================(!)");
+
         System.out.println("Waiting for client message...");
       }
       catch (ClassNotFoundException ce) {
-        ce.printStackTrace();
       }
     }
     catch (IOException e) {
-      e.printStackTrace();
     }
   }
 }

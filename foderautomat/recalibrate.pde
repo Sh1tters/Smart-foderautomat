@@ -11,7 +11,13 @@ class recalibrate {
     fill(#613CC6);
     textFont(bold, 40);
     if (!keyboard) {
-      text("Indtast nyt serienummer", width/2, 400);
+      String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
+      for (int i = 0; i < rawdata.length; i++) {
+        String[] raw = split(rawdata[i], ":");
+        if (raw[0].equals("Serial")) {
+          text("Indtast nyt serienummer ("+raw[1]+")", width/2, 400);
+        }
+      }
     } else {
       text(serial, width/2, 400);
     }
