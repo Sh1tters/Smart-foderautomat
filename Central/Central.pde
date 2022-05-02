@@ -21,8 +21,9 @@ String quantityOfFood = "";
 
 Serial myPort;
 String val;
-int serial = 0000;
+int serial = 9999;
 PrintWriter output;
+int timer;
 
 void setup() {
   // get serial
@@ -31,10 +32,11 @@ void setup() {
 
   if (!exist) {
     output = createWriter("database.txt");
-    output.write("Serial:0000");
+    output.write("Serial:9999");
     output.flush();
     output.close();
   }
+  serial = 9999;
 
 
   String portName = "COM8"; // default portname. If error occurs, change to "COM9"
@@ -51,27 +53,38 @@ void draw() {
     }
   }
 
-  // request update from app
-  try {
-    // connect to socket
-    socket = new Socket(InetAddress.getLocalHost(), serial);
-    if (socket.isConnected()) {
-      // Send a message to the client application
-      ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-      oos.writeObject("request update");
-      oos.close();
+  if (millis() - timer >= 5000) {
+    try {
+      try {
+        println("debug");
+        println(serial);
+        // Connect to socket now
+        socket = new Socket(InetAddress.getLocalHost(), serial);
 
-      // Read and display the response message sent by server application
-      ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-      String message = (String) ois.readObject();
-      updateFile(message);
-      ois.close();
+        if (socket.isConnected()) {
+
+          // Send a message to the client application
+          ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+          oos.writeObject("request update");
+
+          // Read and display the response message sent by server application
+          ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+          String message = (String) ois.readObject();
+          println("current ser: "+serial);
+          updateFile(message);
+          serial = parseInt(message);
+          println(serial);
+          ois.close();
+          oos.close();
+        }
+      } 
+      catch(ClassNotFoundException e) {
+      }
     }
-  }
-  catch(Exception e) {  
-
-
-    e.printStackTrace();
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+    timer = millis();
   }
 
 
@@ -89,16 +102,13 @@ void draw() {
       myPort.write("1");
     }
   }
-  catch(Exception e) {  
-
-
+  catch(Exception e) {
     e.printStackTrace();
   }
 
   // send last time fed to app
   if (myPort.available()>0) {
     val=myPort.readStringUntil('\n');
-    println(val);
     if (val.equals("%")) {
       try {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -126,30 +136,56 @@ void draw() {
 void requestSocketRespondAndMessage(InetAddress host, int port, String keyword) {
   if (communication) {
     try {
+      try {
+        // Connect to socket now
+        socket = new Socket(host.getHostName(), port);
 
-      // Connect to socket now
-      socket = new Socket(host.getHostName(), port);
+        if (socket.isConnected()) {
 
-      if (socket.isConnected()) {
+          // Send a message to the client application
+          ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+          oos.writeObject("requesting " + keyword + " from dc_motor#1");
 
-        // Send a message to the client application
-        ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-        oos.writeObject("requesting " + keyword + " from dc_motor#1");
+          // Read and display the response message sent by server application
+          ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+          String message = (String) ois.readObject();
+          if (keyword.equals("time")) scheduledTimeToEat = message;
+          else if (keyword.equals("quantity")) quantityOfFood = message;
 
-        // Read and display the response message sent by server application
-        ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-        String message = (String) ois.readObject();
-        if (keyword.equals("time")) scheduledTimeToEat = message;
-        else if (keyword.equals("quantity")) quantityOfFood = message;
-
-        ois.close();
-        oos.close();
+          ois.close();
+          oos.close();
+        }
+      } 
+      catch(ClassNotFoundException e) {
       }
     }
-    catch (IOException | ClassNotFoundException e) {
+    catch (IOException e) {
       e.printStackTrace();
     }
     communication = false;
+  }
+}
+
+void updateSerial() {
+  try {
+    try {
+      // Send a message to the client application
+      ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+      oos.writeObject("request update");
+
+      // Read and display the response message sent by server application
+      ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+      String message = (String) ois.readObject();
+      println("port: "+message);
+      updateFile(message);
+      ois.close();
+      oos.close();
+    } 
+    catch(ClassNotFoundException e) {
+    }
+  }
+  catch (IOException e) {
+    e.printStackTrace();
   }
 }
 

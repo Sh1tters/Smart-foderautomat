@@ -37,7 +37,6 @@ class database {
     String on = "false";
     String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
     String[] raw;
-    println(rawdata.length);
     for (int i = 0; i < rawdata.length; i++) {
       raw = split(rawdata[i], ":");
       // find keyword
@@ -56,7 +55,6 @@ class database {
     for (int i = 0; i < rawdata.length; i++) {
       String[] raw = split(rawdata[i], ":");
       if(raw[0].equals("Serial")){
-        println(raw[1]);
       }
     }
   }
@@ -90,7 +88,7 @@ class database {
     output = createWriter("/data/user/0/processing.test.foderautomat/files/database.txt");
     output.write("FirstRun:true\n");
     output.write("Auto:true\n");
-    output.write("Serial:0000\n");
+    output.write("Serial:9999\n");
     output.flush();
     output.close();
   }

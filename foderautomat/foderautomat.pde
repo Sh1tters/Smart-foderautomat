@@ -30,8 +30,8 @@ splash[] splash;
 int unit = 3;
 ArrayList<splash> splashAni = new ArrayList<splash>();
 PFont Segoe, SegoeBold, bold;
-PImage home, settings, info, home_s, settings_s, info_s, datoColWhite, datoColBlue, Oversigt, background, 
-  kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug, clock, line, 
+PImage home, settings, info, home_s, settings_s, info_s, datoColWhite, datoColBlue, Oversigt, background,
+  kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug, clock, line,
   automatiskfodring, rekalibrer, switchOn, switchOff, switchButton, bigHud, smallHud, on, off, smallHud_info;
 PImage[] datesWhite = new PImage[4];
 String nav_active_item = "Home";
@@ -162,9 +162,9 @@ void draw() {
   image(background, width/2, height/2);
   //makeGradientBackground();
 
-  if (db.firstrun()) {
+  //  if (db.firstrun()) {
+  if (1 == 2) {
     // First ever run
-    println("first run!!");
 
 
     db.findandchangevalue("FirstRun", "false");
@@ -200,8 +200,6 @@ void draw() {
       nav.view();
     }
   }
-
-  db.requestData();
 }
 
 void mousePressed() {
@@ -282,14 +280,12 @@ class ConnectionHandler implements Runnable {
         // Updater
         if (message.equals("request update")) {
           ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-          String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
-          for (int i = 0; i < rawdata.length; i++) {
-            String[] raw = split(rawdata[i], ":");
-            if (raw[0].equals("Serial")) {
-              oos.writeObject(raw[1]);
-            }
-          }
+          oos.writeObject(PORT+"");
+          println(PORT + " sent to client");
           oos.close();
+          ois.close();
+          server.close();
+          thread("handleConnection");
         }
 
 
