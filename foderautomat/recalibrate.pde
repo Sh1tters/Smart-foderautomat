@@ -58,7 +58,7 @@ class recalibrate {
   }
 
   void virtualKeyboard() {
-    if (int(key) <= 59 && int(key) >= 48 && key != ':' && key != ';' && serial.length() < 4) { // check if a number was pressed only (1 = 48...0=59)
+    if (int(key) <= 58 && int(key) >= 48 && key != ':' && key != ';' && serial.length() < 4) { // check if a number was pressed only (1 = 48...0=59)
       serial = serial + key;
       key = 0; // reset key
     }

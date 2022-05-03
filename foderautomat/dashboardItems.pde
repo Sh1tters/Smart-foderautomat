@@ -42,8 +42,9 @@ class dashboarditems {
     ugentlig_forbrug = "0";
     // what date is selected?
     if (selected.equals("one")) {
-      String[] rawdata = loadStrings("data.txt");
+      String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
       String[] raw;
+      int total = 0;
       for (int i = 0; i < rawdata.length; i++) {
         raw = split(rawdata[i], "/");
 
@@ -55,13 +56,13 @@ class dashboarditems {
           if (raw[2].equals("sidst_spist")) {
             sidst_spist = raw[1];
           }
-          if (raw[2].equals("time")) {
-            gen_spist = cdb.SumOfTime(3, 1000 * 60 * 60 * 24, simpleDateFormat);
-          }
           if (raw[2].equals("vaegt")) {
             float temp = parseFloat(raw[1]);
             weight = temp;
           }
+          if (raw[2].equals("sidst_spist")) {
+            sidst_spist = raw[1];
+          }    
           if (raw[2].equals("haeldt_op")) {
             foderAmount = cdb.getFoodAmountFilledUp(3, 1000 * 60 * 60 * 24, simpleDateFormat);
             Integer[] day = new Integer[7];
@@ -73,8 +74,9 @@ class dashboarditems {
         }
       }
     } else if (selected.equals("two")) {
-      String[] rawdata = loadStrings("data.txt");
+      String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
       String[] raw;
+      int total = 0;
       for (int i = 0; i < rawdata.length; i++) {
         raw = split(rawdata[i], "/");
 
@@ -86,12 +88,13 @@ class dashboarditems {
           if (raw[2].equals("sidst_spist")) {
             sidst_spist = raw[1];
           }
-          if (raw[2].equals("time")) {
-            gen_spist = cdb.SumOfTime(2, 1000 * 60 * 60 * 24, simpleDateFormat);
-          }
+
           if (raw[2].equals("vaegt")) {
             float temp = parseFloat(raw[1]);
             weight = temp;
+          }
+          if (raw[2].equals("sidst_spist")) {
+            sidst_spist = raw[1];
           }
           if (raw[2].equals("haeldt_op")) {
             foderAmount = cdb.getFoodAmountFilledUp(2, 1000 * 60 * 60 * 24, simpleDateFormat);
@@ -104,8 +107,9 @@ class dashboarditems {
         }
       }
     } else if (selected.equals("three")) {
-      String[] rawdata = loadStrings("data.txt");
+      String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
       String[] raw;
+      int total = 0;
       for (int i = 0; i < rawdata.length; i++) {
         raw = split(rawdata[i], "/");
 
@@ -117,12 +121,12 @@ class dashboarditems {
           if (raw[2].equals("sidst_spist")) {
             sidst_spist = raw[1];
           }
-          if (raw[2].equals("time")) {
-            gen_spist = cdb.SumOfTime(1, 1000 * 60 * 60 * 24, simpleDateFormat);
-          }
           if (raw[2].equals("vaegt")) {
             float temp = parseFloat(raw[1]);
             weight = temp;
+          }
+          if (raw[2].equals("sidst_spist")) {
+            sidst_spist = raw[1];
           }
           if (raw[2].equals("haeldt_op")) {
             foderAmount = cdb.getFoodAmountFilledUp(1, 1000 * 60 * 60 * 24, simpleDateFormat);
@@ -135,8 +139,9 @@ class dashboarditems {
         }
       }
     } else if (selected.equals("four")) {
-      String[] rawdata = loadStrings("data.txt");
+      String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
       String[] raw;
+      int total = 0;
       for (int i = 0; i < rawdata.length; i++) {
         raw = split(rawdata[i], "/");
 
@@ -148,12 +153,12 @@ class dashboarditems {
           if (raw[2].equals("sidst_spist")) {
             sidst_spist = raw[1];
           }
-          if (raw[2].equals("time")) {
-            gen_spist = cdb.SumOfTime(0, 1000 * 60 * 60 * 24, simpleDateFormat);
-          }
           if (raw[2].equals("vaegt")) {
             float temp = parseFloat(raw[1]);
             weight = temp;
+          }
+          if (raw[2].equals("sidst_spist")) {
+            sidst_spist = raw[1];
           }
           if (raw[2].equals("haeldt_op")) {
             foderAmount = cdb.getFoodAmountFilledUp(0, 1000 * 60 * 60 * 24, simpleDateFormat);
@@ -166,6 +171,30 @@ class dashboarditems {
         }
       }
     }
+
+    // gennemsnitstid:
+    int sum1 = 0;
+    int sum2 = 0;
+    String[] data = loadStrings("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
+    String[] w;
+    ArrayList<String> hits = new ArrayList<String>();
+    for (int i = 0; i < data.length; i++) {
+      w = split(data[i], "/");
+      if (w[2].equals("sidst_spist")) {
+        hits.add(w[1]);
+      }
+    }
+
+    for (int i = 0; i < hits.size(); i++) {
+      String[] bug = split(hits.get(i), ":");
+      int num = Integer.parseInt(bug[0]);
+      int num1 = Integer.parseInt(bug[1]);
+      sum1 += num;
+      sum2 += num1;
+    }
+    sum1 = sum1 / hits.size();
+    sum2 = sum2 / hits.size();
+    gen_spist = sum1 + ":" + sum2;
   }
 
 
@@ -202,7 +231,6 @@ class dashboarditems {
 
     noFill();
     stroke(#707070);
-    // strokeWeight(8);
     rect(width/5-100, 800, filled, 85, 50);
 
     fill(0);

@@ -140,7 +140,10 @@ void setup() {
 
   // database file exist-?
   if (!db.isFileCreated()) {
-    db.createFile();
+  //  db.createFile();
+  }
+  if (!cdb.isFileCreated()) {
+    cdb.createFile();
   }
 
   String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
@@ -153,7 +156,6 @@ void setup() {
 
   // start preload thread
   thread("preload");
-
 
 
   // start coms
@@ -310,7 +312,7 @@ class ConnectionHandler implements Runnable {
           // retrieve information from dc motor txt document
           // Send a response information to the client application
           ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-          oos.writeObject(cdb.requestDcMotorSumOfAllTime());
+          oos.writeObject(cdb.requestDcMotorSumOfAllTime() + "");
           oos.close();
           ois.close();
           println("(!) Sent back to client: " + cdb.requestDcMotorSumOfAllTime() + " (!)");
@@ -337,8 +339,6 @@ class ConnectionHandler implements Runnable {
 
         println();
         println("(!)=================LOG================(!)");
-
-        System.out.println("Waiting for client message...");
       }
       catch (ClassNotFoundException ce) {
       }

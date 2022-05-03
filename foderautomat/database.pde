@@ -54,7 +54,7 @@ class database {
     String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
     for (int i = 0; i < rawdata.length; i++) {
       String[] raw = split(rawdata[i], ":");
-      if(raw[0].equals("Serial")){
+      if (raw[0].equals("Serial")) {
       }
     }
   }
@@ -95,32 +95,32 @@ class database {
 }
 
 class communicationDatabase {
-  
-  int SumOfDay(int day, long DAY_IN_MS, SimpleDateFormat simpleDateFormat){
+
+  int SumOfDay(int day, long DAY_IN_MS, SimpleDateFormat simpleDateFormat) {
     int total = 0;
-    String[] rawdata = loadStrings("data.txt");
+    String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
     String[] raw;
-    
-    for(int i = 0; i < rawdata.length; i++) {
+
+    for (int i = 0; i < rawdata.length; i++) {
       raw = split(rawdata[i], "/");
-      
+
       Date d = new Date(System.currentTimeMillis() - (day * DAY_IN_MS));
       String stringDate = simpleDateFormat.format(d);
-      
-      if(raw[0].equals(stringDate)){
-        if(raw[2].equals("haeldt_op")){
+
+      if (raw[0].equals(stringDate)) {
+        if (raw[2].equals("haeldt_op")) {
           total += parseInt(raw[1]);
         }
       }
     }
-    
+
     return total;
   }
 
   String SumOfTime(int day, long DAY_IN_MS, SimpleDateFormat simpleDateFormat) {
     int sum1 = 0;
     int sum2 = 0;
-    String[] rawdata = loadStrings("data.txt");
+    String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
     String[] raw;
     ArrayList<String> hits = new ArrayList<String>();
     for (int i = 0; i < rawdata.length; i++) {
@@ -138,7 +138,7 @@ class communicationDatabase {
     }
 
     for (int i = 0; i < hits.size(); i++) {
-      String[] bug = split(hits.get(i), ".");
+      String[] bug = split(hits.get(i), ":");
       int num = Integer.parseInt(bug[0]);
       int num1 = Integer.parseInt(bug[1]);
       sum1 += num;
@@ -153,47 +153,46 @@ class communicationDatabase {
   String requestDcMotorSumOfAllTime() {
     int sum1 = 0;
     int sum2 = 0;
-    datafileExist();
 
-    String[] rawdata = loadStrings("data.txt");
+    String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
     String[] filtered;
     ArrayList<String> hits = new ArrayList<String>();
     for (int i = 0; i < rawdata.length; i++) {
       filtered = split(rawdata[i], "/");
 
       // check if data is time measured
-      if (filtered[2].equals("time")) {
+      if (filtered[2].equals("sidst_spist")) {
         hits.add(filtered[1]);
       }
     }
 
     for (int i = 0; i < hits.size(); i++) {
-      String[] bug = split(hits.get(i), ".");
-      int num = Integer.parseInt(bug[0]);
-      int num1 = Integer.parseInt(bug[1]);
+      String[] bug = split(hits.get(i), ":");
+      int num = parseInt(bug[0]);
+      int num1 = parseInt(bug[1]);
       sum1 += num;
       sum2 += num1;
     }
     sum1 = sum1 / hits.size();
     sum2 = sum2 / hits.size();
 
-    return sum1 + ":" + sum2;
+
+    String time = sum1 + ":" + sum2;
+    return time + "";
   }
 
   void LastTimeFedAppendData(String time) {
-    datafileExist();
 
     try {
-      File file = new File("data.txt");
+      File file = new File("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
 
       FileWriter fw = new FileWriter(file, true);///true = append
       BufferedWriter bw = new BufferedWriter(fw);
       PrintWriter pw = new PrintWriter(bw);
 
       Date date = new Date();
-      SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd");
-
-      pw.write(format.format(date)+"/"+time+"/last_fed_time");
+      SimpleDateFormat format = new SimpleDateFormat("dd:MM:yyyy");
+      pw.write(format.format(date)+"/"+time+"/sidst_spist\n");
 
       pw.close();
     }
@@ -204,19 +203,17 @@ class communicationDatabase {
   }
 
   void WeightSensorAppendData(String data) {
-    datafileExist();
-
     try {
-      File file = new File("data.txt");
+      File file = new File("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
 
       FileWriter fw = new FileWriter(file, true);///true = append
       BufferedWriter bw = new BufferedWriter(fw);
       PrintWriter pw = new PrintWriter(bw);
 
       Date date = new Date();
-      SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd");
+      SimpleDateFormat format = new SimpleDateFormat("dd:MM:yyyy");
 
-      pw.write(format.format(date)+"/"+data+"/vaegt");
+      pw.write(format.format(date)+"/"+data+"/vaegt\n");
 
       pw.close();
     }
@@ -228,7 +225,7 @@ class communicationDatabase {
 
   String getFoodAmountFilledUp(int day, long DAY_IN_MS, SimpleDateFormat simpleDateFormat) {
     int foder = 0;
-    String[] rawdata = loadStrings("data.txt");
+    String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
     String[] raw;
     for (int i = 0; i < rawdata.length; i++) {
       raw = split(rawdata[i], "/");
@@ -262,13 +259,25 @@ class communicationDatabase {
     return value + "%";
   }
 
-  void datafileExist() {
-    File f = dataFile("data.txt");
+  boolean isFileCreated() {
+    File f = dataFile("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
     boolean exist = f.isFile();
 
     if (exist) {
-    } else {
-      output = createWriter("data.txt");
+      return true;
     }
+    return false;
+  }
+
+  void createFile() {
+    output = createWriter("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
+    output.write("02:05:2022/17:10/sidst_spist\n");
+    output.write("02:05:2022/14:50/sidst_spist\n");
+    output.write("03:05:2022/01:21/sidst_spist\n");
+    output.write("03:05:2022/17:43/sidst_spist\n");
+    output.write("03:05:2022/32/haeldt_op\n");
+
+    output.flush();
+    output.close();
   }
 }

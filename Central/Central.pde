@@ -19,7 +19,7 @@ String scheduledTimeToEat = "";
 // string variable for quantity of food
 String quantityOfFood = "";
 
-boolean cd;
+boolean cd = false;
 
 Serial myPort;
 String val;
@@ -41,7 +41,7 @@ void draw() {
     }
   }
   // check for updates to serial
-
+  println(serial);
   if (millis() - timer1 >= 2000) {
     try {
       try {
@@ -82,21 +82,20 @@ void draw() {
   if (millis() - timer2 >= 20000) {
     if (!cd) {
       try {
-        println("now");
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
 
         requestSocketRespondAndMessage(InetAddress.getLocalHost(), serial, "time");
         String[] split_time = dtf.format(now).toString().split(":");
-        println(split_time[0] + ":" + split_time[1], scheduledTimeToEat);
+        String current_time = split_time[0] + ":" + split_time[1];
 
-        if (split_time[0] + ":" + split_time[1] == scheduledTimeToEat) {
+        if (current_time.equals(scheduledTimeToEat)) {
           // request how long it should spin
           requestSocketRespondAndMessage(InetAddress.getLocalHost(), serial, "quantity");
           // fill up now
           println("now time to fill up");
-          myPort.write("quan:"+quantityOfFood);
-          myPort.write("1");
+      //    myPort.write("quan:"+quantityOfFood);
+       //   myPort.write("1");
           cd  = true;
           cd_timeleft = 60; // set cooldown to 1 minute, so that this if statement doesnt work twice (fills up twice)
         }
@@ -105,8 +104,8 @@ void draw() {
       }
       timer2 = millis();
     }
-    runCD();
   }
+  runCD();
 }
 
 
@@ -189,15 +188,17 @@ void keyPressed() {
   //myPort.write("0");
 }
 
-  void runCD() {
-    if (cd) {
-      if (millis() - timer3 >= 1000)
-      {
-        cd_timeleft--;
-        if (cd_timeleft < 0) {
-          cd = false;
-        }
-        timer3 = millis();
+void runCD() {
+  if (cd) {
+    if (millis() - timer3 >= 1000)
+    {
+      println("cd: " + cd_timeleft);
+      cd_timeleft--;
+      if (cd_timeleft < 0) {
+        println("gay boy");
+        cd = false;
       }
+      timer3 = millis();
     }
   }
+}
