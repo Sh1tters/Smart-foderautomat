@@ -15,50 +15,6 @@ PrintWriter output;
 
 class database {
 
-  boolean firstrun() {
-    String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
-    String[] raw;
-    for (int i = 0; i < rawdata.length; i++) {
-      raw = split(rawdata[i], ":");
-
-      // find keyword
-      if (raw[0].equals("FirstRun")) {
-
-        // find value
-        if (raw[1].equals("true")) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  String isAutoOn() {
-    String on = "false";
-    String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
-    String[] raw;
-    for (int i = 0; i < rawdata.length; i++) {
-      raw = split(rawdata[i], ":");
-      // find keyword
-      if (raw[0].equals("Auto")) {
-        // find value
-        if (raw[1].equals("true")) {
-          on = "true";
-        }
-      }
-    }
-    return on;
-  }
-
-  void requestData() {
-    String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
-    for (int i = 0; i < rawdata.length; i++) {
-      String[] raw = split(rawdata[i], ":");
-      if (raw[0].equals("Serial")) {
-      }
-    }
-  }
-
   void findandchangevalue(String keyword, String newValue) {
     String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
     String[] raw;

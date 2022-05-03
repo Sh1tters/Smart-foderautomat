@@ -286,6 +286,10 @@ class dashboarditems {
     textFont(SegoeBold, 50);
     text("Ugentlig forbrug:", width/5+570, 1450);
     text("Max. " + ugentlig_forbrug + " g foder", width/5+570, 1525);
+    
+    //0.0376666667 kr = 1 g mad (taget udgangspunkt i katte foder pris og kg)
+    float spent = 0.0376666667 * Float.parseFloat(ugentlig_forbrug);
+    ugentlig_forbrug_penge = spent + "";
     text("Ugentlig forbrug:", width/5+570, 1650);
     text(ugentlig_forbrug_penge + " kr.", width/5+570, 1725);
   }

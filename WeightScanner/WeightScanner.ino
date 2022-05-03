@@ -15,6 +15,13 @@ const int LOADCELL_DOUT_PIN = 3;
 const int LOADCELL_SCK_PIN = 2;
 
 
+boolean cd = false;
+int timer;
+int cd_timeleft;
+
+const float max = 0.;
+
+
 HX711 scale;
 
 void setup() {
@@ -67,15 +74,41 @@ void setup() {
 }
 
 void loop() {
+  runCD();
+if(!cd){
+  
   float weight = (scale.get_units());
-  Serial.println(weight);
-  if(weight > 1.){
-    Serial.print("Found: ");
-    Serial.print(scale.get_units(), 1);
-    Serial.println("");
-  } else Serial.println(scale.get_units(), 1);
 
-  scale.power_down();			        // put the ADC in sleep mode
-  delay(5000);
-  scale.power_up();
+  // check for which the weight is increasing or decreasing
+  if(weight > 1.){
+    if(weight > max) max=weight;
+      if(max > weight){
+        println("max weight detected: "+max);
+        // send max weight to central
+        Serial.println("weight:"+max);
+        
+        // set cd
+        cd = true;
+        cd_timeleft = 300; // 5 mins cooldown
+        scale.power_down();	
+      }
+
+      Serial.print(scale.get_units(), 1);
+    }
+  }
+
 }
+
+ void runCD() {
+    if (cd) {
+      if (millis() - time >= 1000)
+      {
+        cd_timeleft--;
+        if (cd_timeleft < 0) {
+          cd = false;
+          scale.power_up();
+        }
+        time = millis();
+      }
+    }
+  }
