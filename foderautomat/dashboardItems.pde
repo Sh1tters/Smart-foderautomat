@@ -289,7 +289,8 @@ class dashboarditems {
     
     //0.0376666667 kr = 1 g mad (taget udgangspunkt i katte foder pris og kg)
     float spent = 0.0376666667 * Float.parseFloat(ugentlig_forbrug);
-    ugentlig_forbrug_penge = spent + "";
+    String value = nf(spent, 0, 2);
+    ugentlig_forbrug_penge = value;
     text("Ugentlig forbrug:", width/5+570, 1650);
     text(ugentlig_forbrug_penge + " kr.", width/5+570, 1725);
   }

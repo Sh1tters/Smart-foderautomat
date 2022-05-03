@@ -137,15 +137,12 @@ void setup() {
   n = 80;
   r = 200;
 
-
-  // database file exist-?
-  if (!db.isFileCreated()) {
-  //  db.createFile();
-  }
   if (!cdb.isFileCreated()) {
     cdb.createFile();
   }
-
+  // use database.txt when running first time(when you uninstalled and installed again)
+  // use /data/user/0/processing.test.foderautomat/files/database.txt when running any other time
+// ("/data/user/0/processing.test.foderautomat/files/database.txt");
   String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
   for (int i = 0; i < rawdata.length; i++) {
     String[] raw = split(rawdata[i], ":");
@@ -250,7 +247,7 @@ void handleConnection() {
     // school connection: 100.72.99.140:PORT
     println("Starting up server...");
     //PORT
-    server = new ServerSocket(PORT, backlog, InetAddress.getByName("100.72.99.140"));
+    server = new ServerSocket(PORT, backlog, InetAddress.getByName("192.168.1.141"));
   }
   catch (IOException e) {
     e.printStackTrace();

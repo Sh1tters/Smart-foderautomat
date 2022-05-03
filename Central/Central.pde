@@ -41,7 +41,6 @@ void draw() {
     }
   }
   // check for updates to serial
-  println(serial);
   if (millis() - timer1 >= 2000) {
     try {
       try {
