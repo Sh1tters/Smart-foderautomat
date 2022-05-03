@@ -95,6 +95,27 @@ class database {
 }
 
 class communicationDatabase {
+  
+  int SumOfDay(int day, long DAY_IN_MS, SimpleDateFormat simpleDateFormat){
+    int total = 0;
+    String[] rawdata = loadStrings("data.txt");
+    String[] raw;
+    
+    for(int i = 0; i < rawdata.length; i++) {
+      raw = split(rawdata[i], "/");
+      
+      Date d = new Date(System.currentTimeMillis() - (day * DAY_IN_MS));
+      String stringDate = simpleDateFormat.format(d);
+      
+      if(raw[0].equals(stringDate)){
+        if(raw[2].equals("haeldt_op")){
+          total += parseInt(raw[1]);
+        }
+      }
+    }
+    
+    return total;
+  }
 
   String SumOfTime(int day, long DAY_IN_MS, SimpleDateFormat simpleDateFormat) {
     int sum1 = 0;

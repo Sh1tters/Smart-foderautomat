@@ -39,6 +39,7 @@ class dashboarditems {
     gen_spist = "00:00";
     foderAmount = "0";
     weight = 0.;
+    ugentlig_forbrug = "0";
     // what date is selected?
     if (selected.equals("one")) {
       String[] rawdata = loadStrings("data.txt");
@@ -63,6 +64,11 @@ class dashboarditems {
           }
           if (raw[2].equals("haeldt_op")) {
             foderAmount = cdb.getFoodAmountFilledUp(3, 1000 * 60 * 60 * 24, simpleDateFormat);
+            Integer[] day = new Integer[7];
+            for (int j = 0; j < 7; j++) {
+              day[j] = cdb.SumOfDay(j, 1000 * 60 * 60 * 24, simpleDateFormat);
+            }
+            ugentlig_forbrug = day[0] + day[1] + day[2] + day[3] + day[4] + day[5] + day[6] +"";
           }
         }
       }
@@ -89,6 +95,11 @@ class dashboarditems {
           }
           if (raw[2].equals("haeldt_op")) {
             foderAmount = cdb.getFoodAmountFilledUp(2, 1000 * 60 * 60 * 24, simpleDateFormat);
+            Integer[] day = new Integer[7];
+            for (int j = 0; j < 7; j++) {
+              day[j] = cdb.SumOfDay(j, 1000 * 60 * 60 * 24, simpleDateFormat);
+            }
+            ugentlig_forbrug = day[0] + day[1] + day[2] + day[3] + day[4] + day[5] + day[6] +"";
           }
         }
       }
@@ -115,6 +126,11 @@ class dashboarditems {
           }
           if (raw[2].equals("haeldt_op")) {
             foderAmount = cdb.getFoodAmountFilledUp(1, 1000 * 60 * 60 * 24, simpleDateFormat);
+            Integer[] day = new Integer[7];
+            for (int j = 0; j < 7; j++) {
+              day[j] = cdb.SumOfDay(j, 1000 * 60 * 60 * 24, simpleDateFormat);
+            }
+            ugentlig_forbrug = day[0] + day[1] + day[2] + day[3] + day[4] + day[5] + day[6] +"";
           }
         }
       }
@@ -141,6 +157,11 @@ class dashboarditems {
           }
           if (raw[2].equals("haeldt_op")) {
             foderAmount = cdb.getFoodAmountFilledUp(0, 1000 * 60 * 60 * 24, simpleDateFormat);
+            Integer[] day = new Integer[7];
+            for (int j = 0; j < 7; j++) {
+              day[j] = cdb.SumOfDay(j, 1000 * 60 * 60 * 24, simpleDateFormat);
+            }
+            ugentlig_forbrug = day[0] + day[1] + day[2] + day[3] + day[4] + day[5] + day[6] +"";
           }
         }
       }
@@ -181,7 +202,7 @@ class dashboarditems {
 
     noFill();
     stroke(#707070);
-   // strokeWeight(8);
+    // strokeWeight(8);
     rect(width/5-100, 800, filled, 85, 50);
 
     fill(0);
@@ -193,7 +214,6 @@ class dashboarditems {
     textAlign(CENTER);
     textFont(SegoeBold, 65 );
     text(foderAmount+"/350 g", width/5+90, 1000);
-    
   }
 
   void dashboard_vaegt() {
@@ -213,9 +233,8 @@ class dashboarditems {
     noStroke();
     ellipseMode(CENTER);
     ellipse(width-200, 1035, 35, 35);
-    
+
     strokeWeight(0);
-    
   }
 
   void dashboard_tid() {
@@ -268,7 +287,7 @@ class dashboarditems {
     if (mouseX > width/2-300 && mouseX < width/2-300+600 && mouseY > 1880 && mouseY < 1880 + 200) {
       if (!cd) {
         // start motor
-
+        haeld_op_knap = true;
         // start timer delay
         cd = true;
         cd_timeleft = 20; // 20 seconds

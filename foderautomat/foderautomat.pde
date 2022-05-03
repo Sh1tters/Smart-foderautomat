@@ -14,6 +14,7 @@ import java.net.SocketAddress;
 
 public static int PORT = 49664;
 private ServerSocket server;
+boolean haeld_op_knap = false;
 
 boolean preload = true;
 float n, r, t;
@@ -244,10 +245,13 @@ void handleConnection() {
     //https://stackoverflow.com/questions/8965155/cannot-assign-requested-address-using-serversocket-socketbind
     //0.0.0.0:49664
     // home connection: 192.168.1.141:PORT
+    // school connection: 100.72.99.140:PORT
     println("Starting up server...");
-    server = new ServerSocket(PORT, backlog, InetAddress.getByName("192.168.1.141"));
+    //PORT
+    server = new ServerSocket(PORT, backlog, InetAddress.getByName("100.72.99.140"));
   }
   catch (IOException e) {
+    e.printStackTrace();
   }
   //println("(!) Server socket is bounded: " + server.isBound() + " (!)");
   //println("(!) Local Socket Address: "+ server.getLocalSocketAddress() +"(!)");
@@ -288,8 +292,10 @@ class ConnectionHandler implements Runnable {
         // Updater
         if (message.equals("request update")) {
           ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-          oos.writeObject(PORT+"");
-          println(PORT + " sent to client");
+          if (haeld_op_knap) {
+            oos.writeObject(PORT+":run");
+            haeld_op_knap = false;
+          } else oos.writeObject(PORT+": ");
           db.findandchangevalue("Serial", PORT+"");
           server.close();
           delay(500);
@@ -298,7 +304,7 @@ class ConnectionHandler implements Runnable {
 
 
         //DC MOTOR
-        if (message.equals("!requesting time to dc motor module")) {
+        if (message.equals("requesting time to dc motor module")) {
           println("(!) Received a request from DC Motor! Sending back information.. (!)");
 
           // retrieve information from dc motor txt document
@@ -306,7 +312,7 @@ class ConnectionHandler implements Runnable {
           ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
           oos.writeObject(cdb.requestDcMotorSumOfAllTime());
           oos.close();
-
+          ois.close();
           println("(!) Sent back to client: " + cdb.requestDcMotorSumOfAllTime() + " (!)");
         }
 
@@ -314,8 +320,8 @@ class ConnectionHandler implements Runnable {
         if (message.startsWith("last_time_fed:")) {
           println("(!) last time fed information received. Appending to data sheet now (!)");
           String[] data = message.split(":");
-
           cdb.LastTimeFedAppendData(data[1]);
+          ois.close();
         }
 
         //WEIGHT SENSOR
@@ -323,14 +329,11 @@ class ConnectionHandler implements Runnable {
           // append information to weight document
           println("(!) information from weight sensor received. Appending to data sheet now (!)");
           String[] data = message.split(":");
-
           cdb.WeightSensorAppendData(data[1]);
+          ois.close();
         }
 
 
-
-        ois.close();
-        socket.close();
 
         println();
         println("(!)=================LOG================(!)");
