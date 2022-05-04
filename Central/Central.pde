@@ -33,7 +33,7 @@ void setup() {
   String portName = "COM8"; // default portname. If error occurs, change to "COM9"
   String portName2 = "COM9";
   //  myPort = new Serial(this, portName, 115200);
-  // myPort2 = new Serial(this, portName2, 115201)
+  myPort2 = new Serial(this, portName2, 115201);
 }
 
 void draw() {
@@ -127,7 +127,7 @@ void arduino() {
 
         String time1 = dtf.format(now);
         // connect to socket
-        socket = new Socket("", serial);
+        socket = new Socket("100.72.99.140", serial);
         if (socket.isConnected()) {
           String data = weight.split(":")[1]; // get the weight from string
           // Send a message to the client application
@@ -229,7 +229,6 @@ void runCD() {
       println("cd: " + cd_timeleft);
       cd_timeleft--;
       if (cd_timeleft < 0) {
-        println("gay boy");
         cd = false;
       }
       timer3 = millis();

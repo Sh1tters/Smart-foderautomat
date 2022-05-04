@@ -15,7 +15,8 @@ class splash {
         ellipseMode(CENTER);
         fill(125, opacity);
         ellipse(mouseX, mouseY, r, r);
-        r = r + 20;opacity = opacity - 20;
+        r = r + 20;
+        opacity = opacity - 20;
         if(opacity < 0){
             onKill();
         }

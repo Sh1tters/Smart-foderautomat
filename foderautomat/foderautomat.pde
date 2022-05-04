@@ -256,7 +256,7 @@ void handleConnection() {
     // school connection: 100.72.99.140:PORT
     println("Starting up server...");
     //PORT
-    server = new ServerSocket(PORT, backlog, InetAddress.getByName("192.168.1.141"));
+    server = new ServerSocket(PORT, backlog, InetAddress.getByName("100.72.99.140"));
   }
   catch (IOException e) {
     e.printStackTrace();

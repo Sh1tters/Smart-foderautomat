@@ -99,7 +99,6 @@ class settings {
     }
 
     // recalibrate
-    // openKeyboard();
     if (mouseX > width/2-425 && mouseX < width/2-425 + 165*5 && mouseY > rekaliY-100 && mouseY < rekaliY-100 + 200) {
       nav_active_item = "Recalibrate";
       rc.serial = "";
@@ -108,8 +107,5 @@ class settings {
       delay(500);
       mouseX = 10000;
     }
-  }
-
-  void settings_handler() {
   }
 }

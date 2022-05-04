@@ -1,31 +1,31 @@
 /**
- *
- * HX711 library for Arduino - example file
- * https://github.com/bogde/HX711
- *
- * MIT License
- * (c) 2018 Bogdan Necula
- *
+
+   HX711 library for Arduino - example file
+   https://github.com/bogde/HX711
+
+   MIT License
+   (c) 2018 Bogdan Necula
+
 **/
 #include "HX711.h"
 
 
 // HX711 circuit wiring
-const int LOADCELL_DOUT_PIN = 3;
-const int LOADCELL_SCK_PIN = 2;
+const int LOADCELL_DOUT_PIN = D4;
+const int LOADCELL_SCK_PIN = D3;
 
 
 boolean cd = false;
 int timer;
 int cd_timeleft;
 
-const float max = 0.;
+float maxx = 0.1;
 
 
 HX711 scale;
 
 void setup() {
-  Serial.begin(115201);
+  Serial.begin(115200);
   Serial.println("HX711 Demo");
 
   Serial.println("Initializing the scale");
@@ -50,7 +50,7 @@ void setup() {
 
   Serial.print("get units: \t\t");
   Serial.println(scale.get_units(5), 1);	// print the average of 5 readings from the ADC minus tare weight (not set) divided
-						// by the SCALE parameter (not set yet)
+  // by the SCALE parameter (not set yet)
 
   scale.set_scale(2280.f);                      // this value is obtained by calibrating the scale with known weights; see the README for details
   scale.tare();				        // reset the scale to 0
@@ -68,47 +68,47 @@ void setup() {
 
   Serial.print("get units: \t\t");
   Serial.println(scale.get_units(5), 1);        // print the average of 5 readings from the ADC minus tare weight, divided
-						// by the SCALE parameter set with set_scale
+  // by the SCALE parameter set with set_scale
 
   Serial.println("Readings:");
 }
 
 void loop() {
-  runCD();
-if(!cd){
-  
   float weight = (scale.get_units());
 
-  // check for which the weight is increasing or decreasing
-  if(weight > 1.){
-    if(weight > max) max=weight;
-      if(max > weight){
-        println("max weight detected: "+max);
+  runCD();
+  if (!cd) {
+    //   check for which the weight is increasing or decreasing
+    if (weight > 1.) {
+      if (weight > maxx) {
+        maxx = weight;
+      }
+      if (maxx > weight) {
+        Serial.print("max weight detected: ");
+        Serial.print(maxx);
+        Serial.println("");
         // send max weight to central
-        Serial.println("weight:"+max);
-        
+
         // set cd
         cd = true;
         cd_timeleft = 300; // 5 mins cooldown
-        scale.power_down();	
       }
-
-      Serial.print(scale.get_units(), 1);
     }
   }
+  Serial.println(cd_timeleft);
 
 }
 
- void runCD() {
-    if (cd) {
-      if (millis() - time >= 1000)
-      {
-        cd_timeleft--;
-        if (cd_timeleft < 0) {
-          cd = false;
-          scale.power_up();
-        }
-        time = millis();
+void runCD() {
+  if (cd) {
+    if (millis() - timer >= 1000)
+    {
+      cd_timeleft--;
+      if (cd_timeleft < 0) {
+        cd = false;
+        maxx = 0.;
       }
+      timer = millis();
     }
   }
+}
