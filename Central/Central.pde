@@ -22,14 +22,18 @@ String quantityOfFood = "";
 boolean cd = false;
 
 Serial myPort;
+Serial myPort2;
 String val;
+String weight;
 int serial = 9999;
 PrintWriter output;
 int timer1, timer2, timer3, cd_timeleft;
 
 void setup() {
   String portName = "COM8"; // default portname. If error occurs, change to "COM9"
+  String portName2 = "COM9";
   //  myPort = new Serial(this, portName, 115200);
+  // myPort2 = new Serial(this, portName2, 115201)
 }
 
 void draw() {
@@ -60,7 +64,8 @@ void draw() {
           delay(500);
           updateFile(msg[0]);
           if (msg[1].equals("run")) {
-            // myPort.write("1");
+            String amount = msg[2];
+            // myPort.write("1:"+amount);
           }
           ois.close();
           oos.close();
@@ -93,8 +98,8 @@ void draw() {
           requestSocketRespondAndMessage(InetAddress.getLocalHost(), serial, "quantity");
           // fill up now
           println("now time to fill up");
-      //    myPort.write("quan:"+quantityOfFood);
-       //   myPort.write("1");
+          //    myPort.write("quan:"+quantityOfFood);
+          //   myPort.write("1");
           cd  = true;
           cd_timeleft = 60; // set cooldown to 1 minute, so that this if statement doesnt work twice (fills up twice)
         }
@@ -104,16 +109,46 @@ void draw() {
       timer2 = millis();
     }
   }
+  arduino();
   runCD();
 }
 
+void arduino() {
+  if (myPort2.available()>0) {
+    weight = myPort2.readStringUntil('\n');
+    if (weight.startsWith("weight:")) {
+      try {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd:MM:yyyy");
+        LocalDateTime now = LocalDateTime.now();
+
+        String time = dtf.format(now);
+        DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("HH:mm");
+        LocalDateTime now1 = LocalDateTime.now();
+
+        String time1 = dtf.format(now);
+        // connect to socket
+        socket = new Socket("", serial);
+        if (socket.isConnected()) {
+          String data = weight.split(":")[1]; // get the weight from string
+          // Send a message to the client application
+          ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+          oos.writeObject("weight:"+data+":"+time+":"+time1);
+          oos.close();
+        }
+      } 
+      catch(Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+}
 
 // send last time fed to app
 //if (myPort.available()>0) {
 //  val=myPort.readStringUntil('\n');
 //  if (val.equals("%")) {
 //    try {
-//      DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+//      DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd:MM:yyyy");
 //      LocalDateTime now = LocalDateTime.now();
 
 //      String time = dtf.format(now);

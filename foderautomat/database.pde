@@ -14,9 +14,23 @@ PrintWriter output;
 
 
 class database {
-
+  
+  boolean isAutoOn(){
+    String[] rawdata = loadStrings(filePath);
+    String[] raw;
+    for(int i = 0; i < rawdata.length; i++){
+      raw = split(rawdata[i], ":");
+      
+      if(raw[0].equals("Auto")){
+        if(raw[i].equals("true")) return true;
+        else return false;
+      }
+    }
+    return false;
+  }
+  
   void findandchangevalue(String keyword, String newValue) {
-    String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
+    String[] rawdata = loadStrings(filePath);
     String[] raw;
     for (int i = 0; i < rawdata.length; i++) {
       raw = split(rawdata[i], ":");
@@ -31,7 +45,7 @@ class database {
   }
 
   boolean isFileCreated() {
-    File f = dataFile("/data/user/0/processing.test.foderautomat/files/database.txt");
+    File f = dataFile(filePath);
     boolean exist = f.isFile();
 
     if (exist) {
@@ -41,10 +55,11 @@ class database {
   }
 
   void createFile() {
-    output = createWriter("/data/user/0/processing.test.foderautomat/files/database.txt");
+    output = createWriter(filePath);
     output.write("FirstRun:true\n");
     output.write("Auto:true\n");
     output.write("Serial:9999\n");
+    output.write("Settings:32\n");
     output.flush();
     output.close();
   }
@@ -158,7 +173,7 @@ class communicationDatabase {
     }
   }
 
-  void WeightSensorAppendData(String data) {
+  void WeightSensorAppendData(String data, String date) {
     try {
       File file = new File("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
 
@@ -166,10 +181,8 @@ class communicationDatabase {
       BufferedWriter bw = new BufferedWriter(fw);
       PrintWriter pw = new PrintWriter(bw);
 
-      Date date = new Date();
-      SimpleDateFormat format = new SimpleDateFormat("dd:MM:yyyy");
 
-      pw.write(format.format(date)+"/"+data+"/vaegt\n");
+      pw.write(date+"/"+data+"/vaegt\n");
 
       pw.close();
     }

@@ -25,7 +25,7 @@ const float max = 0.;
 HX711 scale;
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(115201);
   Serial.println("HX711 Demo");
 
   Serial.println("Initializing the scale");

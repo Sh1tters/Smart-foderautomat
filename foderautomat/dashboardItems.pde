@@ -44,7 +44,6 @@ class dashboarditems {
     if (selected.equals("one")) {
       String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
       String[] raw;
-      int total = 0;
       for (int i = 0; i < rawdata.length; i++) {
         raw = split(rawdata[i], "/");
 
@@ -76,7 +75,6 @@ class dashboarditems {
     } else if (selected.equals("two")) {
       String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
       String[] raw;
-      int total = 0;
       for (int i = 0; i < rawdata.length; i++) {
         raw = split(rawdata[i], "/");
 
@@ -109,7 +107,6 @@ class dashboarditems {
     } else if (selected.equals("three")) {
       String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
       String[] raw;
-      int total = 0;
       for (int i = 0; i < rawdata.length; i++) {
         raw = split(rawdata[i], "/");
 
@@ -141,7 +138,6 @@ class dashboarditems {
     } else if (selected.equals("four")) {
       String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/storage/data.txt");
       String[] raw;
-      int total = 0;
       for (int i = 0; i < rawdata.length; i++) {
         raw = split(rawdata[i], "/");
 

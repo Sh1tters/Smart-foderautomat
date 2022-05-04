@@ -15,9 +15,9 @@ import java.net.SocketAddress;
 public static int PORT = 49664;
 private ServerSocket server;
 boolean haeld_op_knap = false;
-
 boolean preload = true;
 float n, r, t;
+int maengde;
 
 navigationbar nav;
 recalibrate rc;
@@ -26,6 +26,7 @@ information in;
 fragments frag;
 database db;
 dashboarditems dbi;
+MachineSettings ms;
 communicationDatabase cdb;
 splash[] splash;
 int unit = 3;
@@ -39,6 +40,7 @@ String nav_active_item = "Home";
 boolean firstrun;
 color c1, c2;
 int y, x, w, h;
+String filePath;
 
 void preload() {
   // runs on a different thread
@@ -68,7 +70,6 @@ void preload() {
   home_s = loadImage("home - Copy.png");
   settings_s = loadImage("settings - Copy.png");
   info_s = loadImage("info - Copy.png");
-
   datesWhite[0] = loadImage("Rectangle 7.png");
   datesWhite[0].resize(244, 270);
   datesWhite[1] = loadImage("Rectangle 7.png");
@@ -77,13 +78,10 @@ void preload() {
   datesWhite[2].resize(244, 270);
   datesWhite[3] = loadImage("Rectangle 7.png");
   datesWhite[3].resize(244, 270);
-
   datoColBlue = loadImage("Rectangle 8.png");
   datoColBlue.resize(244, 270);
   Oversigt = loadImage("Oversigt.png");
   Oversigt.resize(285, 80);
-
-  //kitty_forbrug, kitty_spist, kitty_vaegt, kitty_time, dashboarditem, vaegt, spist, tid, forbrug;
   kitty_forbrug = loadImage("forbrug.png");
   kitty_forbrug.resize(100, 100);
   kitty_spist = loadImage("kitty.png");
@@ -94,12 +92,10 @@ void preload() {
   kitty_time.resize(100, 100);
   dashboarditem = loadImage("Rectangle 25.png");
   dashboarditem.resize(179*3, 215*3);
-
   clock = loadImage("clock.png");
   clock.resize(75, 75);
   line = loadImage("Line 2.png");
   line.resize(350, 5);
-
   Segoe = createFont("Segoe UI", 32);
   SegoeBold = createFont("Segoe UI Bold", 70);
   bold = createFont("Arial Bold", 40);
@@ -127,6 +123,7 @@ void setup() {
   nav = new navigationbar();
   frag = new fragments();
   db = new database();
+  ms = new MachineSettings();
   cdb = new communicationDatabase();
   dbi = new dashboarditems();
   in = new information();
@@ -138,16 +135,23 @@ void setup() {
   r = 200;
 
   if (!cdb.isFileCreated()) {
+    println("bruh");
     cdb.createFile();
   }
+  // filePath = "database.txt";
+  filePath = "/data/user/0/processing.test.foderautomat/files/database.txt";
+
   // use database.txt when running first time(when you uninstalled and installed again)
   // use /data/user/0/processing.test.foderautomat/files/database.txt when running any other time
-// ("/data/user/0/processing.test.foderautomat/files/database.txt");
-  String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
+  // /data/user/0/processing.test.foderautomat/files/database.txt
+  String[] rawdata = loadStrings(filePath);
   for (int i = 0; i < rawdata.length; i++) {
     String[] raw = split(rawdata[i], ":");
     if (raw[0].equals("Serial")) {
       PORT = parseInt(raw[1]);
+    }
+    if (raw[0].equals("Settings")) {
+      maengde = parseInt(raw[1]);
     }
   }
 
@@ -162,11 +166,14 @@ void setup() {
 
 void draw() {
   // Update serial
-  String[] rawdata = loadStrings("/data/user/0/processing.test.foderautomat/files/database.txt");
+  String[] rawdata = loadStrings(filePath);
   for (int i = 0; i < rawdata.length; i++) {
     String[] raw = split(rawdata[i], ":");
     if (raw[0].equals("Serial")) {
       PORT = parseInt(raw[1]);
+    }
+    if (raw[0].equals("Settings")) {
+      maengde = parseInt(raw[1]);
     }
   }
 
@@ -189,6 +196,8 @@ void draw() {
       frag.Fsettings();
     } else if (nav_active_item == "Recalibrate") {
       rc.start();
+    } else if (nav_active_item == "Maengde") {
+      ms.startMaengde();
     } else {
       frag.Finfo();
     }
@@ -292,7 +301,7 @@ class ConnectionHandler implements Runnable {
         if (message.equals("request update")) {
           ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
           if (haeld_op_knap) {
-            oos.writeObject(PORT+":run");
+            oos.writeObject(PORT+":run:"+maengde);
             haeld_op_knap = false;
           } else oos.writeObject(PORT+": ");
           db.findandchangevalue("Serial", PORT+"");
@@ -301,36 +310,43 @@ class ConnectionHandler implements Runnable {
           thread("handleConnection");
         }
 
+        // weight
+        if (message.startsWith("weight:")) {
+          String weight = message.split(":")[1];
+          String date = message.split(":")[2];
+          String time = message.split(":")[3];
+          cdb.WeightSensorAppendData(weight, date);
+
+          // append time to data also
+          cdb.LastTimeFedAppendData(time);
+          ois.close();
+        }
+
+        //
+
 
         //DC MOTOR
         if (message.equals("requesting time to dc motor module")) {
-          println("(!) Received a request from DC Motor! Sending back information.. (!)");
+          if (db.isAutoOn()) { // send time since auto feeding is on
 
-          // retrieve information from dc motor txt document
-          // Send a response information to the client application
-          ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-          oos.writeObject(cdb.requestDcMotorSumOfAllTime() + "");
-          oos.close();
-          ois.close();
-          println("(!) Sent back to client: " + cdb.requestDcMotorSumOfAllTime() + " (!)");
+            println("(!) Received a request from DC Motor! Sending back information.. (!)");
+
+            // retrieve information from dc motor txt document
+            // Send a response information to the client application
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(cdb.requestDcMotorSumOfAllTime() + "");
+            oos.close();
+            ois.close();
+            println("(!) Sent back to client: " + cdb.requestDcMotorSumOfAllTime() + " (!)");
+          } else { // send unreachable time since auto feeding is off
+            println("Auto is off (!) sending unreachable time");
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject("99:99");
+            oos.close();
+            ois.close();
+          }
         }
 
-        //DC MOTOR
-        if (message.startsWith("last_time_fed:")) {
-          println("(!) last time fed information received. Appending to data sheet now (!)");
-          String[] data = message.split(":");
-          cdb.LastTimeFedAppendData(data[1]);
-          ois.close();
-        }
-
-        //WEIGHT SENSOR
-        if (message.startsWith("InfoFromWeightSensor:")) {
-          // append information to weight document
-          println("(!) information from weight sensor received. Appending to data sheet now (!)");
-          String[] data = message.split(":");
-          cdb.WeightSensorAppendData(data[1]);
-          ois.close();
-        }
 
 
 

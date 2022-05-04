@@ -18,7 +18,7 @@ class navigationbar {
   void handler(){
     if(nav_active_item == "Home"){
       image(home_s, width/2, height-75);
-    } else if(nav_active_item == "Settings" || nav_active_item == "Recalibrate"){
+    } else if(nav_active_item == "Settings" || nav_active_item == "Recalibrate" || nav_active_item == "Maengde"){
       image(settings_s, 137.333, height-75);
     } else {
         image(info_s, width-137.333, height-75);
