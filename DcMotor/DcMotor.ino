@@ -4,6 +4,11 @@
 #include <AFMotor.h>
 
 boolean run = false;
+int runtime = 0;
+int time;
+int cd_timeleft;
+boolean cd;
+boolean active;
 
 String quan;
 // Number of steps per output rotation
@@ -35,44 +40,39 @@ void setup() {
 } 
 
 void loop() {
-  if(run) startMotor(10);
-  if(!run) motor.step(0, BACKWARD, SINGLE);
+  if(run) {
+    startMotor(time);
+    run = false;
+  }
+
+
   if(Serial.available()>0){
     String state = Serial.readString();
 
-    if(state == "1"){
+    if(state.startsWith("runtime:")){
+      time = state.split(":")[1];
       run = true;
     }
-
-    if(state == "0"){
-      run = false;
-    }
-
-    // new quantity received?
-    if(state.startsWith("q:")){
-      String data = state.substring(2,7);
-      //apply new data to quan var
-        quan = data;
-        Serial.println(quan);
-    }
+  }
+  if(active){
+  if (millis() - time >= 1000)
+      {
+        cd_timeleft--;
+        motor.step(10, BACKWARD, SINGLE);
+        if (cd_timeleft < 0) {
+          run = false;
+        }
+        time = millis();
+      }
   }
 }
 
 
 
-void startMotor(int rpm){
-  /*
-    Because our motor is a rookie, we have configured the rpm to 1 
-    and type single as it will result in the smoothest spinning
-
-    Default Settings:
-      (!) rpm = 1
-      (!) type = SINGLE
-      (!) direction = FORWARD
-  */
-
- // statement on how long its gonna run then use the method stopMotor when done.
-  motor.step(rpm, BACKWARD, SINGLE);
-
-  Serial.println("%");
+void startMotor(int time){
+active = true;
+cd_timeleft = time;
+Serial.println("%");
 }
+
+//motor.step(0, BACKWARD, SINGLE);

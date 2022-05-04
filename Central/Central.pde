@@ -27,6 +27,7 @@ String val;
 String weight;
 int serial = 9999;
 PrintWriter output;
+int maengde = 0;
 int timer1, timer2, timer3, cd_timeleft;
 
 void setup() {
@@ -65,7 +66,8 @@ void draw() {
           updateFile(msg[0]);
           if (msg[1].equals("run")) {
             String amount = msg[2];
-            // myPort.write("1:"+amount);
+            maengde = amount;
+            // myPort.write("runtime:"+calculateRunTime(0, amount));
           }
           ois.close();
           oos.close();
@@ -89,17 +91,14 @@ void draw() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
 
-        requestSocketRespondAndMessage(InetAddress.getLocalHost(), serial, "time");
+        requestSumOfTimeToRunMotor();
         String[] split_time = dtf.format(now).toString().split(":");
         String current_time = split_time[0] + ":" + split_time[1];
 
         if (current_time.equals(scheduledTimeToEat)) {
-          // request how long it should spin
-          requestSocketRespondAndMessage(InetAddress.getLocalHost(), serial, "quantity");
           // fill up now
           println("now time to fill up");
-          //    myPort.write("quan:"+quantityOfFood);
-          //   myPort.write("1");
+          // myPort.write("runtime:"+calculateRunTime(0, maengde);
           cd  = true;
           cd_timeleft = 60; // set cooldown to 1 minute, so that this if statement doesnt work twice (fills up twice)
         }
@@ -143,6 +142,20 @@ void arduino() {
   }
 }
 
+/**
+We have calculated that every 0.32 seconds it fills up 1 gram of food
+We just take that value and times it by the amount we want to and then we get the total time
+for the motor to run on
+ */
+
+int calculateRunTime(float how_long_it_takes_per_g, int amount_of_food){
+  return parseInt(how_long_it_takes_per_g * amount_of_food);
+}
+
+
+
+
+
 // send last time fed to app
 //if (myPort.available()>0) {
 //  val=myPort.readStringUntil('\n');
@@ -170,7 +183,8 @@ void arduino() {
 
 
 
-void requestSocketRespondAndMessage(InetAddress host, int port, String keyword) {
+
+void requestSumOfTimeToRunMotor() {
   try {
     try {
       // Connect to socket now
@@ -185,7 +199,7 @@ void requestSocketRespondAndMessage(InetAddress host, int port, String keyword) 
         // Read and display the response message sent by server application
         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
         String message = (String) ois.readObject();
-        if (keyword.equals("time")) scheduledTimeToEat = message;
+        scheduledTimeToEat = message;
 
         ois.close();
         oos.close();
