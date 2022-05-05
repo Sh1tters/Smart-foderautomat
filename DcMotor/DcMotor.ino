@@ -35,36 +35,40 @@ AccelStepper stepper(forwardstep, backwardstep); // use functions to step
 
 void setup() {
   Serial.begin(115200);
-
+  Serial.println("debug");
   motor.setSpeed(50);  // 50 rpm
 } 
 
 void loop() {
+  Serial.println("gay");
+      motor.step(1, BACKWARD, SINGLE);
+  run = true;
   if(run) {
-    startMotor(time);
-    run = false;
+    motor.step(10, BACKWARD, SINGLE);
+    //startMotor(time);
+    //run = false;
   }
 
 
-  if(Serial.available()>0){
-    String state = Serial.readString();
-
-    if(state.startsWith("runtime:")){
-      time = state.split(":")[1];
-      run = true;
-    }
-  }
-  if(active){
-  if (millis() - time >= 1000)
-      {
-        cd_timeleft--;
-        motor.step(10, BACKWARD, SINGLE);
-        if (cd_timeleft < 0) {
-          run = false;
-        }
-        time = millis();
-      }
-  }
+//  if(Serial.available()>0){
+//    String state = Serial.readString();
+//
+//    if(state.startsWith("runtime:")){
+//      time = state.split(":")[1];
+//      run = true;
+//    }
+//  }
+//  if(active){
+//  if (millis() - time >= 1000)
+//      {
+//        cd_timeleft--;
+//        motor.step(10, BACKWARD, SINGLE);
+//        if (cd_timeleft < 0) {
+//          run = false;
+//        }
+//        time = millis();
+//      }
+//  }
 }
 
 
@@ -72,7 +76,6 @@ void loop() {
 void startMotor(int time){
 active = true;
 cd_timeleft = time;
-Serial.println("%");
 }
 
 //motor.step(0, BACKWARD, SINGLE);

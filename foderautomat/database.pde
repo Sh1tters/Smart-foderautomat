@@ -180,9 +180,11 @@ class communicationDatabase {
       FileWriter fw = new FileWriter(file, true);///true = append
       BufferedWriter bw = new BufferedWriter(fw);
       PrintWriter pw = new PrintWriter(bw);
-
-
-      pw.write(date+"/"+data+"/vaegt\n");
+      Float f = parseFloat(data);
+      println(f, f/10);
+      String rest = nf(f/10, 0,2);
+      
+      pw.write(date+"/"+rest.replace(",", ".")+"/vaegt\n");
 
       pw.close();
     }

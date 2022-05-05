@@ -135,10 +135,10 @@ void setup() {
   r = 200;
 
   if (!cdb.isFileCreated()) {
-    println("bruh");
     cdb.createFile();
   }
-  // filePath = "database.txt";
+ cdb.createFile();
+  //filePath = "database.txt";
   filePath = "/data/user/0/processing.test.foderautomat/files/database.txt";
 
   // use database.txt when running first time(when you uninstalled and installed again)
@@ -154,6 +154,7 @@ void setup() {
       maengde = parseInt(raw[1]);
     }
   }
+
 
   // start preload thread
   thread("preload");
@@ -296,6 +297,7 @@ class ConnectionHandler implements Runnable {
         // Read a message sent by client application
         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
         String message = (String) ois.readObject();
+        println(message);
 
         // Updater
         if (message.equals("request update")) {
@@ -311,14 +313,20 @@ class ConnectionHandler implements Runnable {
         }
 
         // weight
-        if (message.startsWith("weight:")) {
-          String weight = message.split(":")[1];
-          String date = message.split(":")[2];
-          String time = message.split(":")[3];
-          cdb.WeightSensorAppendData(weight, date);
+        if (message.startsWith("weight")) {
+          DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd:MM:yyyy");
+          LocalDateTime now = LocalDateTime.now();
 
+          String time = dtf.format(now);
+          DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("HH:mm");
+          LocalDateTime now1 = LocalDateTime.now();
+
+          String time1 = dtf1.format(now1);
+          String weight = message.split("/")[1];
+
+          cdb.WeightSensorAppendData(weight, time);
           // append time to data also
-          cdb.LastTimeFedAppendData(time);
+          // cdb.LastTimeFedAppendData(time1);
           ois.close();
         }
 

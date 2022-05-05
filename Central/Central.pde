@@ -34,7 +34,7 @@ void setup() {
   String portName = "COM8"; // default portname. If error occurs, change to "COM9"
   String portName2 = "COM9";
   //  myPort = new Serial(this, portName, 115200);
-  myPort2 = new Serial(this, portName2, 115201);
+  myPort2 = new Serial(this, "COM8", 115200);
 }
 
 void draw() {
@@ -46,7 +46,7 @@ void draw() {
     }
   }
   // check for updates to serial
-  if (millis() - timer1 >= 2000) {
+  if (millis() - timer1 >= 5000) {
     try {
       try {
         // Connect to socket now
@@ -66,7 +66,7 @@ void draw() {
           updateFile(msg[0]);
           if (msg[1].equals("run")) {
             String amount = msg[2];
-            maengde = amount;
+            maengde = parseInt(msg[2]);
             // myPort.write("runtime:"+calculateRunTime(0, amount));
           }
           ois.close();
@@ -86,7 +86,7 @@ void draw() {
 
   // check if the time is up to fill up food
   if (millis() - timer2 >= 20000) {
-    if (!cd) {
+    if (!cd && 1==2) {
       try {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
@@ -115,40 +115,68 @@ void draw() {
 void arduino() {
   if (myPort2.available()>0) {
     weight = myPort2.readStringUntil('\n');
-    if (weight.startsWith("weight:")) {
-      try {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd:MM:yyyy");
-        LocalDateTime now = LocalDateTime.now();
+    println(weight);
+    if (weight != "" || weight != null || weight != " ") {
+      if (weight.startsWith("test:")) {
+        try {
+          DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd:MM:yyyy");
+          LocalDateTime now = LocalDateTime.now();
 
-        String time = dtf.format(now);
-        DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("HH:mm");
-        LocalDateTime now1 = LocalDateTime.now();
+          String time = dtf.format(now);
+          DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("HH:mm");
+          LocalDateTime now1 = LocalDateTime.now();
 
-        String time1 = dtf.format(now);
-        // connect to socket
-        socket = new Socket("100.72.99.140", serial);
-        if (socket.isConnected()) {
-          String data = weight.split(":")[1]; // get the weight from string
-          // Send a message to the client application
-          ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-          oos.writeObject("weight:"+data+":"+time+":"+time1);
-          oos.close();
+          String time1 = dtf1.format(now1);
+          // connect to socket
+          socket = new Socket("100.72.99.140", serial);
+          if (socket.isConnected()) {
+            String data = weight.replace("\n", "").split(":")[1]; // get the weight from string
+            // Send a message to the client application
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+          oos.writeObject("weight/"+data);
+            oos.close();
+          }
+        } 
+        catch(Exception e) {
+          e.printStackTrace();
         }
-      } 
-      catch(Exception e) {
-        e.printStackTrace();
       }
+
+      //if (weight.split(":")[0] == "test") {
+      //  try {
+      //    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd:MM:yyyy");
+      //    LocalDateTime now = LocalDateTime.now();
+
+      //    String time = dtf.format(now);
+      //    DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("HH:mm");
+      //    LocalDateTime now1 = LocalDateTime.now();
+
+      //    String time1 = dtf.format(now);
+      //    // connect to socket
+      //    socket = new Socket("100.72.99.140", serial);
+      //    if (socket.isConnected()) {
+      //      String data = weight.split(":")[1]; // get the weight from string
+      //      // Send a message to the client application
+      //      ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+      //      oos.writeObject("weight:"+data+":"+time+":"+time1);
+      //      oos.close();
+      //    }
+      //  } 
+      //  catch(Exception e) {
+      //    e.printStackTrace();
+      //  }
+      //}
     }
   }
 }
 
 /**
-We have calculated that every 0.32 seconds it fills up 1 gram of food
-We just take that value and times it by the amount we want to and then we get the total time
-for the motor to run on
+ We have calculated that every 0.32 seconds it fills up 1 gram of food
+ We just take that value and times it by the amount we want to and then we get the total time
+ for the motor to run on
  */
 
-int calculateRunTime(float how_long_it_takes_per_g, int amount_of_food){
+int calculateRunTime(float how_long_it_takes_per_g, int amount_of_food) {
   return parseInt(how_long_it_takes_per_g * amount_of_food);
 }
 
@@ -180,6 +208,7 @@ int calculateRunTime(float how_long_it_takes_per_g, int amount_of_food){
 //    }
 //  }
 //}
+
 
 
 
